@@ -72,6 +72,10 @@ hash.o: hash.c
 .PHONY: run
 run:
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
+
+.PHONY: run2
+run2:
+	sbatch --gres=gpu:1 --time=3 --wrap="python vector_add2.py"
 .PHONY: clean
 clean:
 	rm -f *.o a.out core hash slurm*

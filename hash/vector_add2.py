@@ -46,7 +46,6 @@ __kernel void func(__global char* a, __global int* c) {
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
 a = np.chararray((1,5))
-c = np.random.rand(N).astype(np.int32)
 
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
 # GPU memory (and vice versa):
