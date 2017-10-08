@@ -4,6 +4,7 @@
 int main(){
     char * name = "david";
     printf("%s\n",name);
+    printf("%d %d \n",(int) strlen(name),(int)sizeof(name));
     int n[(int) strlen(name)];
     int i;
     for(i=0;i<strlen(name);i++){
