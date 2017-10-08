@@ -37,12 +37,12 @@ __kernel void func(__global char* a, __global int* c) {
 # run.  Note that Numerical Python uses names for certain types that differ from
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
-a = np.chararray(1,5)
-a[0:0] = 'd'
-a[0:1] = 'a'
-a[0:2] = 'v'
-a[0:3] = 'i'
-a[0:4] = 'd'
+a = np.chararray(5, )
+a[0] = 'd'
+a[1] = 'a'
+a[2] = 'v'
+a[3] = 'i'
+a[4] = 'd'
 print a
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
 # GPU memory (and vice versa):
