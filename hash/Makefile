@@ -71,14 +71,14 @@ hash.o: hash.c
 
 .PHONY: run
 run:
-	rm sbatch*
+	rm slurm*
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
-	cat sbatch*
+	cat slurm*
 .PHONY: run2
 run2:
 	rm sbatch*
 	sbatch --gres=gpu:1 --time=3 --wrap="python vector_add2.py"
-	cat sbatch*
+	cat slurm*
 .PHONY: clean
 clean:
 	rm -f *.o a.out core hash slurm*
