@@ -26,16 +26,8 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 kernel = """
 __kernel void func(__global char* a, __global int* c,int strLength) {
     unsigned int i = get_global_id(0);
-        int d;
-        for(d=0;d<strLength;d++){
-            char c = a[d];
-            int ascii = (int) c;
-            c[d] = ascii % 17;
-        }
-        int j;
-        for(j=0;j<strLength;j++){
-            printf("key %c | index %d\n",a[j],n[j]);
-        }
+    int j = (int) a[i];
+    c[i] = j % 17;
 }
 """
 
