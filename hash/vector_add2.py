@@ -24,6 +24,8 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 # Define the OpenCL kernel you wish to run; most of the interesting stuff you
 # will be doing involves modifying or writing kernels:
 kernel = """
+#include <stdio.h>                                                                          
+#include <string.h>   
 __kernel void func(__global char* a, __global int* c) {
     unsigned int i = get_global_id(0);
         int d;
