@@ -59,4 +59,3 @@ print 'opencl (c): ', c
 
 # Compare the results from the GPU with those obtained using Numerical Python;
 # this should print True:
-print 'equal:        ', np.allclose(a, c)
