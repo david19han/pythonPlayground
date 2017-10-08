@@ -26,11 +26,11 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 kernel = """
 __kernel void func(__global char* a, __global int* c) {
     unsigned int i = get_global_id(0);
-        int i;
-        for(i=0;i<strlen(a);i++){
-            char c = a[i];
+        int d;
+        for(d=0;d<strlen(a);d++){
+            char c = a[d];
             int ascii = (int) c;
-            c[i] = ascii % 17;
+            c[d] = ascii % 17;
         }
         int j;
         for(j=0;j<strlen(a);j++){
@@ -68,4 +68,3 @@ print 'opencl (c): ', c
 # Compare the results from the GPU with those obtained using Numerical Python;
 # this should print True:
 print 'equal:        ', np.allclose(a, c)
- 
