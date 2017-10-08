@@ -53,7 +53,7 @@ a = "david"
 # You need to set the flags of the buffers you create properly; otherwise,
 # you might not be able to read or write them as needed:
 mf = cl.mem_flags
-c_buf = cl.Buffer(ctx, mf.WRITE_ONLY, b.nbytes)
+c_buf = cl.Buffer(ctx, mf.WRITE_ONLY, a.nbytes)
 
 # Launch the kernel; notice that you must specify the global and locals to
 # determine how many threads of execution are run. We can take advantage of Numpy to

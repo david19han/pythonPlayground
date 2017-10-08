@@ -69,9 +69,12 @@ hash.o: hash.c
 # And the "clean" target is not a file name, so we tell make that
 # it's a "phony" target.
 
+.PHONY: run
+run:
+	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
 .PHONY: clean
 clean:
-	rm -f *.o a.out core hash
+	rm -f *.o a.out core hash slurm*
 
 # "all" target is useful if your Makefile builds multiple programs.
 # Here we'll have it first do "clean", and rebuild the main target.
