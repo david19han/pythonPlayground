@@ -24,7 +24,7 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 # Define the OpenCL kernel you wish to run; most of the interesting stuff you
 # will be doing involves modifying or writing kernels:
 kernel = """
-__kernel void func(__global char* a, __global int* c,int strLength) {
+__kernel void func(__global char* a, __global int* c) {
     unsigned int i = get_global_id(0);
     int j = (int) a[i];
     c[i] = j % 17;
@@ -38,7 +38,6 @@ __kernel void func(__global char* a, __global int* c,int strLength) {
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
 a = np.chararray((1,5))
-strLength = 5
 
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
 # GPU memory (and vice versa):
@@ -50,7 +49,7 @@ c_gpu = cl.array.empty(queue, a.shape, a.dtype)
 # use the shape of one of the input arrays as the global size. Since our kernel
 # only accesses the global work item ID, we simply set the local size to None:
 prg = cl.Program(ctx, kernel).build()
-prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data,strLength)
+prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
 
 # Retrieve the results from the GPU:
 c = c_gpu.get()
