@@ -76,7 +76,7 @@ run:
 	cat slurm*
 .PHONY: run2
 run2:
-	rm sbatch*
+	rm slurm*
 	sbatch --gres=gpu:1 --time=3 --wrap="python vector_add2.py"
 	cat slurm*
 .PHONY: clean
