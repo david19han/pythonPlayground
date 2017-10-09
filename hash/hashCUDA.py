@@ -52,19 +52,40 @@ for mult in range(1,10000):
     findhash = mod.get_function("findHash")
 
     #start timer
-    start = time.time()
+
     # call the kernel on the card
-    findhash(
-        # inputs
-        a_gpu,
-        c_gpu,
-        # (only one) block
-        block = (totalLen, 1, 1),grid = (1,1)
-    )
-    #record time elapsed
-    end = time.time() - start
-    times.append(end)
+    if(totalLen < 512):
+        start = time.time()
+        findhash(
+            # inputs
+            a_gpu,
+            c_gpu,
+            # (only one) block
+            block = (totalLen, 1, 1),grid = (1,1)
+        )
+        #record time elapsed
+        end = time.time() - start
+        times.append(end)
+    else:
+        start = time.time()
+        block_size = 512
+        grid_size = totalLen/block_size
+        block = (block_size,1,1)
+        grid = (grid_size,1)
+        findhash(
+            # inputs
+            a_gpu,
+            c_gpu,
+            # (only one) block
+            block,grid
+        )
+        #record time elapsed
+        end = time.time() - start
+        times.append(end)
     x.append(totalLen)
+
+
+
 
 
 #print results
