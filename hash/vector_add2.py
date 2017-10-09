@@ -44,6 +44,7 @@ a[2] = 'v'
 a[3] = 'i'
 a[4] = 'd'
 print a.dtype
+a.dtype = "|S5"
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
 # GPU memory (and vice versa):
 a_gpu = cl.array.to_device(queue, a)
