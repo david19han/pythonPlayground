@@ -76,7 +76,7 @@ for mult in range(1,10000):
             # inputs
             a_gpu,
             c_gpu,
-            block,grid
+            block=block,grid=grid
         )
         #record time elapsed
         end = time.time() - start
