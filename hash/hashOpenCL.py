@@ -37,6 +37,8 @@ __kernel void func(__global char* a, __global int* c) {
 # run.  Note that Numerical Python uses names for certain types that differ from
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
+
+#input
 david = "david"
 davidLen = len(david)
 appendDavid = ""
@@ -45,6 +47,7 @@ x = []
 x.append(0)
 times.append(0)
 
+#run for different input lengths
 for mult in range(1,10000):
     totalLen = davidLen * mult
     a = np.chararray(totalLen, )
@@ -52,27 +55,26 @@ for mult in range(1,10000):
     for i in range(totalLen):
         a[i] = appendDavid[i]
 
-    # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
-    # GPU memory (and vice versa):
     a_gpu = cl.array.to_device(queue, a)
     dt = np.dtype(np.int32)
     c_gpu = cl.array.empty(queue, a.shape, dt)
 
-    # Launch the kernel; notice that you must specify the global and locals to
-    # determine how many threads of execution are run. We can take advantage of Numpy to
-    # use the shape of one of the input arrays as the global size. Since our kernel
-    # only accesses the global work item ID, we simply set the local size to None:
     prg = cl.Program(ctx, kernel).build()
 
+    #record elapsed time
+    start = timer.time()
     evt = prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
-    times.append(1e-9 * (evt.profile.end - evt.profile.start))
+    times.append(time.time()-start)
+    #evt = prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
+    #times.append(1e-9 * (evt.profile.end - evt.profile.start))
     x.append(totalLen)
 
     # Retrieve the results from the GPU:
     c = c_gpu.get()
 
-    print 'input (a):    ', a
-    print 'opencl (c): ', c
+#print results
+for i in range(0,10000):
+    print ("length: ", x[i],"| time: ",times[i])
 
 import matplotlib as mpl
 mpl.use('agg')
