@@ -15,7 +15,7 @@ import pycuda.autoinit
 kernel_code_template = """
 __global__ void findHash(char *a, int *c)
 {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = (int) a[i];
     c[i] = j % 17;
 }
