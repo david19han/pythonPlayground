@@ -15,7 +15,7 @@ import pycuda.autoinit
 kernel_code_template = """
 __global__ void findHash(char *a, int *c)
 {
-    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j = (int) a[i];
     c[i] = j % 17;
 }
@@ -57,7 +57,7 @@ findhash(
     a_gpu,
     c_gpu,
     # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
-    block = (1, 5, 1),grid = (1,1)
+    block = (5, 1, 1),grid = (1,1)
     )
 
 # print the results
