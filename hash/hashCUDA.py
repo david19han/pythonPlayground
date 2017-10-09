@@ -11,6 +11,8 @@ from pycuda import driver, compiler, gpuarray, tools
 
 # -- initialize the device
 import pycuda.autoinit
+import pycuda.driver as drv
+
 
 kernel_code_template = """
 __global__ void findHash(char *a, int *c)
@@ -34,7 +36,7 @@ for mult in range(1,10000):
     a_cpu = np.chararray(totalLen, )
     appendDavid = appendDavid + david
     for i in range(totalLen):
-        a[i] = appendDavid[i]
+        a_cpu[i] = appendDavid[i]
 
     c_cpu = np.zeros(totalLen)
     # transfer host (CPU) memory to device (GPU) memory
@@ -48,7 +50,8 @@ for mult in range(1,10000):
 
     # get the kernel function from the compiled module
     findhash = mod.get_function("findHash")
-    start = time.time()
+    start = drv.Event()
+    start.record
     # call the kernel on the card
     findhash(
         # inputs
@@ -57,8 +60,10 @@ for mult in range(1,10000):
         # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
         block = (5, 1, 1),grid = (1,1)
     )
-    end = time.time() - start
-    times.append(end)
+    end.record
+    end.synchronize()
+    secs = start.time_till(end)*1e-3
+    times.append(secs)
     x.append(totalLen)
 
     # print the results

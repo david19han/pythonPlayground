@@ -63,10 +63,9 @@ for mult in range(1,10000):
     # use the shape of one of the input arrays as the global size. Since our kernel
     # only accesses the global work item ID, we simply set the local size to None:
     prg = cl.Program(ctx, kernel).build()
-    start = time.time()
-    prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
-    end = time.time() - start
-    times.append(end)
+
+    evt = prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
+    times.append(1e-9 * (evt.profile.end - evt.profile.start))
     x.append(totalLen)
 
     # Retrieve the results from the GPU:
