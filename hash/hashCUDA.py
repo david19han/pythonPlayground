@@ -45,7 +45,7 @@ c_gpu = gpuarray.to_gpu(c_cpu)
 mod = compiler.SourceModule(kernel_code_template)
 
 # get the kernel function from the compiled module
-matrixmul = mod.get_function("findHash")
+findhash = mod.get_function("findHash")
 
 # call the kernel on the card
 findhash(
