@@ -30,7 +30,7 @@ x = []
 x.append(0)
 times.append(0)
 
-for mult in range(1,10000):
+for mult in range(1,10):
     totalLen = davidLen * mult
     #initialize the array holding array of chars with my name
     a_cpu = np.chararray(totalLen, )
