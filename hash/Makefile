@@ -71,19 +71,19 @@ hash.o: hash.c
 
 .PHONY: runcl
 runcl:
-	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
+	sbatch --gres=gpu:1 --time=5 --wrap="python hashOpenCL.py"
 .PHONY: runcl2
 runcl2:
 	rm slurm*
-	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
+	sbatch --gres=gpu:1 --time=5 --wrap="python hashOpenCL.py"
 
 .PHONY: runcuda
 runcuda:
-	sbatch --gres=gpu:1 --time=3 --wrap="python hashCUDA.py"
+	sbatch --gres=gpu:1 --time=5 --wrap="python hashCUDA.py"
 .PHONY: runcuda2
 runcuda2:
 	rm slurm*
-	sbatch --gres=gpu:1 --time=3 --wrap="python hashCUDA.py"
+	sbatch --gres=gpu:1 --time=5 --wrap="python hashCUDA.py"
 
 .PHONY: clean
 clean:

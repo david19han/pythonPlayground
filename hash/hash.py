@@ -7,7 +7,7 @@ times = []
 x = []
 x.append(0)
 times.append(0)
-for mult in range(1,100):
+for mult in range(1,10000):
     totalLen = davidLen * mult
     appendDavid = appendDavid + name
     list1 = []
@@ -17,8 +17,6 @@ for mult in range(1,100):
     end = time.time() - start
     times.append(end)
     x.append(totalLen)
-for time in times:
-    print time
 
 import matplotlib as mpl
 mpl.use('agg')
