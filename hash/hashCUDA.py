@@ -29,7 +29,7 @@ times = []
 x = []
 x.append(0)
 times.append(0)
-
+totalLen = 0
 for mult in range(1,10):
     totalLen = davidLen * mult
     #initialize the array holding array of chars with my name
@@ -84,12 +84,8 @@ for mult in range(1,10):
         times.append(end)
     x.append(totalLen)
 
-
-
-
-
 #print results
-for i in range(0,10000):
+for i in range(0,totalLen):
     print ("length: ", x[i],"| time: ",times[i])
 
 #plot
