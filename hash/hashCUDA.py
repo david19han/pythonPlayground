@@ -41,12 +41,8 @@ a_gpu = gpuarray.to_gpu(a_cpu)
 # create empty gpu array for the result (C = A * B)
 c_gpu = gpuarray.to_gpu(c_cpu)
 
-# get the kernel code from the template
-# by specifying the constant MATRIX_SIZE
-kernel_code = kernel_code_template
-
 # compile the kernel code
-mod = compiler.SourceModule(kernel_code)
+mod = compiler.SourceModule(kernel_code_template)
 
 # get the kernel function from the compiled module
 matrixmul = mod.get_function("findHash")
