@@ -24,6 +24,10 @@ __global__ void findHash(char *a, int *c)
 david = "david"
 davidLen = len(david)
 appendDavid = ""
+times = []
+x = []
+x.append(0)
+times.append(0)
 
 for mult in range(1,5):
     totalLen = davidLen * mult
@@ -44,7 +48,7 @@ for mult in range(1,5):
 
     # get the kernel function from the compiled module
     findhash = mod.get_function("findHash")
-
+    start = time.time()
     # call the kernel on the card
     findhash(
         # inputs
@@ -53,9 +57,22 @@ for mult in range(1,5):
         # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
         block = (5, 1, 1),grid = (1,1)
     )
+    end = time.time() - start
+    times.append(end)
+    x.append(totalLen)
 
     # print the results
     print "A (GPU):"
     print a_gpu.get()
     print "Matrix C (GPU):"
     print c_gpu.get()
+
+import matplotlib as mpl
+mpl.use('agg')
+import matplotlib.pyplot as plt
+plt.gcf()
+plt.plot(x,times)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.gca().set_xlim((min(x),max(x)))
+plt.savefig('plot.png')

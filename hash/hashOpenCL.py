@@ -40,6 +40,11 @@ __kernel void func(__global char* a, __global int* c) {
 david = "david"
 davidLen = len(david)
 appendDavid = ""
+times = []
+x = []
+x.append(0)
+times.append(0)
+
 for mult in range(1,5):
     totalLen = davidLen * mult
     a = np.chararray(totalLen, )
@@ -58,7 +63,11 @@ for mult in range(1,5):
     # use the shape of one of the input arrays as the global size. Since our kernel
     # only accesses the global work item ID, we simply set the local size to None:
     prg = cl.Program(ctx, kernel).build()
+    start = time.time()
     prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
+    end = time.time() - start
+    times.append(end)
+    x.append(totalLen)
 
     # Retrieve the results from the GPU:
     c = c_gpu.get()
@@ -66,5 +75,12 @@ for mult in range(1,5):
     print 'input (a):    ', a
     print 'opencl (c): ', c
 
-    # Compare the results from the GPU with those obtained using Numerical Python;
-    # this should print True:
+import matplotlib as mpl
+mpl.use('agg')
+import matplotlib.pyplot as plt
+plt.gcf()
+plt.plot(x,times)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.gca().set_xlim((min(x),max(x)))
+plt.savefig('plot.png')

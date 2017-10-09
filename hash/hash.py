@@ -1,8 +1,31 @@
-name = "david"
-list1 = []
-for c in name:
-    list1.append(ord(c) % 17)
+import time
 
-nameLen = len(name)
-for i in range(nameLen):
-    print ("key: %s | keyValue: %s | index: %s" % (name[i],ord(name[i]),list1[i]))
+name = "david"
+davidLen = len(name)
+appendDavid = ""
+times = []
+x = []
+x.append(0)
+times.append(0)
+for mult in range(1,100):
+    totalLen = davidLen * mult
+    appendDavid = appendDavid + name
+    list1 = []
+    start = time.time()
+    for c in appendDavid:
+        list1.append(ord(c) % 17)
+    end = time.time() - start
+    times.append(end)
+    x.append(totalLen)
+for time in times:
+    print time
+
+import matplotlib as mpl
+mpl.use('agg')
+import matplotlib.pyplot as plt
+plt.gcf()
+plt.plot(x,times)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.gca().set_xlim((min(x),max(x)))
+plt.savefig('plot.png')
