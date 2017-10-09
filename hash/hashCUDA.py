@@ -13,6 +13,8 @@ from pycuda import driver, compiler, gpuarray, tools
 import pycuda.autoinit
 import pycuda.driver as drv
 
+import time
+
 
 kernel_code_template = """
 __global__ void findHash(char *a, int *c)
@@ -31,7 +33,7 @@ x = []
 x.append(0)
 times.append(0)
 
-for mult in range(1,10000):
+for mult in range(1,1000):
     totalLen = davidLen * mult
     a_cpu = np.chararray(totalLen, )
     appendDavid = appendDavid + david
