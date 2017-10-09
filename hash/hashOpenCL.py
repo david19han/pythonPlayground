@@ -64,7 +64,7 @@ for mult in range(1,10000):
     prg = cl.Program(ctx, kernel).build()
 
     #record elapsed time
-    start = timer.time()
+    start = time.time()
     evt = prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
     times.append(time.time()-start)
     #evt = prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
