@@ -43,6 +43,7 @@ a[1] = 'a'
 a[2] = 'v'
 a[3] = 'i'
 a[4] = 'd'
+print a.shape
 print a.dtype
 a.dtype = "|S5"
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
