@@ -37,33 +37,34 @@ __kernel void func(__global char* a, __global int* c) {
 # run.  Note that Numerical Python uses names for certain types that differ from
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
-a = np.chararray(5, )
 david = "david"
-for i in range(len(david)):
-    a[i] = david[i]
-    
+davidLen = len(david)
+appendDavid = ""
+for mult in range(1,5):
+    totalLen = davidLen * mult
+    a = np.chararray(totalLen, )
+    appendDavid = appendDavid + david
+    for i in range(totalLen):
+        a[i] = appendDavid[i]
 
-
-print a.shape
-print a.dtype
-# We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
-# GPU memory (and vice versa):
-a_gpu = cl.array.to_device(queue, a)
-dt = np.dtype(np.int32)
-c_gpu = cl.array.empty(queue, a.shape, dt)
+    # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
+    # GPU memory (and vice versa):
+    a_gpu = cl.array.to_device(queue, a)
+    dt = np.dtype(np.int32)
+    c_gpu = cl.array.empty(queue, a.shape, dt)
 
 # Launch the kernel; notice that you must specify the global and locals to
 # determine how many threads of execution are run. We can take advantage of Numpy to
 # use the shape of one of the input arrays as the global size. Since our kernel
 # only accesses the global work item ID, we simply set the local size to None:
-prg = cl.Program(ctx, kernel).build()
-prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
+    prg = cl.Program(ctx, kernel).build()
+    prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
 
 # Retrieve the results from the GPU:
-c = c_gpu.get()
+    c = c_gpu.get()
 
-print 'input (a):    ', a
-print 'opencl (c): ', c
+    print 'input (a):    ', a
+    print 'opencl (c): ', c
 
 # Compare the results from the GPU with those obtained using Numerical Python;
 # this should print True:
