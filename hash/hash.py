@@ -7,7 +7,7 @@ times = []
 x = []
 x.append(0)
 times.append(0)
-for mult in range(1,1000):
+for mult in range(1,20000):
     totalLen = davidLen * mult
     appendDavid = appendDavid + name
     list1 = []

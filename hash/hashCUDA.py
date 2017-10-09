@@ -33,7 +33,7 @@ x = []
 x.append(0)
 times.append(0)
 
-for mult in range(1,1000):
+for mult in range(1,10000):
     totalLen = davidLen * mult
     a_cpu = np.chararray(totalLen, )
     appendDavid = appendDavid + david
