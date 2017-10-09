@@ -57,7 +57,7 @@ findhash(
     a_gpu,
     c_gpu,
     # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
-    block = (5, 1, 1),grid = (1,1)
+    block = (1, 5, 1),grid = (1,1)
     )
 
 # print the results
