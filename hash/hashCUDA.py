@@ -27,7 +27,7 @@ appendDavid = ""
 
 for mult in range(1,5):
     totalLen = davidLen * mult
-    a = np.chararray(totalLen, )
+    a_cpu = np.chararray(totalLen, )
     appendDavid = appendDavid + david
     for i in range(totalLen):
         a[i] = appendDavid[i]
