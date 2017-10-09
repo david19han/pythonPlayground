@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """
 Vector addition using PyOpenCL.
 """
@@ -7,6 +6,7 @@ Vector addition using PyOpenCL.
 import time
 
 import pyopencl as cl
+import pyopencl.array
 import numpy as np
 
 # Select the desired OpenCL platform; you shouldn't need to change this:
@@ -19,24 +19,15 @@ for platform in platforms:
 
 # Set up a command queue; we need to enable profiling to time GPU operations:
 ctx = cl.Context(devs)
-queue = cl.CommandQueue(ctx,
-        properties=cl.command_queue_properties.PROFILING_ENABLE)
+queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_ENABLE)
 
 # Define the OpenCL kernel you wish to run; most of the interesting stuff you
 # will be doing involves modifying or writing kernels:
 kernel = """
 __kernel void func(__global char* a, __global int* c) {
     unsigned int i = get_global_id(0);
-        int i;
-        for(i=0;i<strlen(a);i++){
-            char c = a[i];
-            int ascii = (int) c;
-            c[i] = ascii % 17;
-        }
-        int j;
-        for(j=0;j<strlen(a);j++){
-            printf("key %c | index %d\n",a[j],n[j]);
-        }
+    int j = (int) a[i];
+    c[i] = j % 17;
 }
 """
 
@@ -46,29 +37,32 @@ __kernel void func(__global char* a, __global int* c) {
 # run.  Note that Numerical Python uses names for certain types that differ from
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
-N = 16
-a = np.chararray((1,5))
-a = "david"
-
-# You need to set the flags of the buffers you create properly; otherwise,
-# you might not be able to read or write them as needed:
-mf = cl.mem_flags
-c_buf = cl.Buffer(ctx, mf.WRITE_ONLY, a.nbytes)
+a = np.chararray(5, )
+a[0] = 'd'
+a[1] = 'a'
+a[2] = 'v'
+a[3] = 'i'
+a[4] = 'd'
+print a.shape
+print a.dtype
+# We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
+# GPU memory (and vice versa):
+a_gpu = cl.array.to_device(queue, a)
+dt = np.dtype(np.int32)
+c_gpu = cl.array.empty(queue, a.shape, dt)
 
 # Launch the kernel; notice that you must specify the global and locals to
 # determine how many threads of execution are run. We can take advantage of Numpy to
 # use the shape of one of the input arrays as the global size. Since our kernel
 # only accesses the global work item ID, we simply set the local size to None:
 prg = cl.Program(ctx, kernel).build()
-prg.func(queue, a.shape, None, a_buf, c_buf)
+prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
 
 # Retrieve the results from the GPU:
-c = np.empty_like(a)
-cl.enqueue_copy(queue, c, c_buf)
+c = c_gpu.get()
 
 print 'input (a):    ', a
-print 'opencl (a+b): ', c
+print 'opencl (c): ', c
 
 # Compare the results from the GPU with those obtained using Numerical Python;
 # this should print True:
-print 'equal:        ', np.allclose(a, c)
