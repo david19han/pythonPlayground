@@ -70,18 +70,18 @@ hash.o: hash.c
 # it's a "phony" target.
 
 .PHONY: runcl
-run:
+runcl:
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
 .PHONY: runcl2
-run2:
+runcl2:
 	rm slurm*
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
 
 .PHONY: runcuda
-run:
+runcuda:
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashCUDA.py"
 .PHONY: runcuda2
-run2:
+runcuda2:
 	rm slurm*
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashCUDA.py"
 
