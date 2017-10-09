@@ -43,7 +43,7 @@ print c_cpu.shape
 a_gpu = gpuarray.to_gpu(a_cpu)
 
 # create empty gpu array for the result (C = A * B)
-c_gpu = gpuarray.to_gpu(c_cpu)
+c_gpu = gpuarray.empty(5, np.int32)
 
 # compile the kernel code
 mod = compiler.SourceModule(kernel_code_template)
