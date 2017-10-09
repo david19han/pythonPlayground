@@ -58,8 +58,8 @@ for mult in range(1,10000):
         # inputs
         a_gpu,
         c_gpu,
-        # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
-        block = (5, 1, 1),grid = (1,1)
+        # (only one) block
+        block = (totalLen, 1, 1),grid = (1,1)
     )
     #record time elapsed
     end = time.time() - start
