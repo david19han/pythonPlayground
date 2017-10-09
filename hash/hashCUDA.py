@@ -29,11 +29,11 @@ __global__ void findHash(char *a, int *c)
 
 # create two random square matrices
 a_cpu = np.chararray(5, )
-a[0] = 'd'
-a[1] = 'a'
-a[2] = 'v'
-a[3] = 'i'
-a[4] = 'd'
+a_cpu[0] = 'd'
+a_cpu[1] = 'a'
+a_cpu[2] = 'v'
+a_cpu[3] = 'i'
+a_cpu[4] = 'd'
 c_cpu = cl.array.empty(queue, a.shape, dt)
 # transfer host (CPU) memory to device (GPU) memory
 a_gpu = gpuarray.to_gpu(a_cpu)
@@ -59,7 +59,7 @@ findhash(
     # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
     block = (5, 1, 1),
     )
- 
+
 # print the results
 print "Matrix A (GPU):"
 print a_gpu.get()
