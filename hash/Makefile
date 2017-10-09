@@ -71,7 +71,6 @@ hash.o: hash.c
 
 .PHONY: runcl
 run:
-	rm slurm*
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
 .PHONY: runcl2
 run2:
@@ -80,7 +79,6 @@ run2:
 
 .PHONY: runcuda
 run:
-	rm slurm*
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashCUDA.py"
 .PHONY: runcuda2
 run2:
