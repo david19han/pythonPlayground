@@ -27,7 +27,6 @@ kernel = """
 __kernel void func(__global char* a, __global int* c) {
     unsigned int i = get_global_id(0);
     int j = (int) a[i];
-    printf("%d\n",j);
     c[i] = j % 17;
 }
 """
@@ -44,7 +43,7 @@ a[1] = 'a'
 a[2] = 'v'
 a[3] = 'i'
 a[4] = 'd'
-print a
+print a.dtype
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
 # GPU memory (and vice versa):
 a_gpu = cl.array.to_device(queue, a)
