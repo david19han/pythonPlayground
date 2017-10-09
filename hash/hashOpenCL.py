@@ -53,18 +53,18 @@ for mult in range(1,5):
     dt = np.dtype(np.int32)
     c_gpu = cl.array.empty(queue, a.shape, dt)
 
-# Launch the kernel; notice that you must specify the global and locals to
-# determine how many threads of execution are run. We can take advantage of Numpy to
-# use the shape of one of the input arrays as the global size. Since our kernel
-# only accesses the global work item ID, we simply set the local size to None:
+    # Launch the kernel; notice that you must specify the global and locals to
+    # determine how many threads of execution are run. We can take advantage of Numpy to
+    # use the shape of one of the input arrays as the global size. Since our kernel
+    # only accesses the global work item ID, we simply set the local size to None:
     prg = cl.Program(ctx, kernel).build()
     prg.func(queue, a.shape, None, a_gpu.data, c_gpu.data)
 
-# Retrieve the results from the GPU:
+    # Retrieve the results from the GPU:
     c = c_gpu.get()
 
     print 'input (a):    ', a
     print 'opencl (c): ', c
 
-# Compare the results from the GPU with those obtained using Numerical Python;
-# this should print True:
+    # Compare the results from the GPU with those obtained using Numerical Python;
+    # this should print True:

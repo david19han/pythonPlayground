@@ -21,49 +21,41 @@ __global__ void findHash(char *a, int *c)
 }
 """
 
-# define the (square) matrix size
-#  note that we'll only use *one* block of threads here
-#  as a consequence this number (squared) can't exceed max_threads,
-#  see http://documen.tician.de/pycuda/util.html#pycuda.tools.DeviceData
-#  for more information on how to get this number for your device
+david = "david"
+davidLen = len(david)
+appendDavid = ""
 
-# create two random square matrices
-a_cpu = np.chararray(5, )
-a_cpu[0] = 'd'
-a_cpu[1] = 'a'
-a_cpu[2] = 'v'
-a_cpu[3] = 'i'
-a_cpu[4] = 'd'
-c_cpu = np.zeros(5)
-print a_cpu
-print a_cpu.shape
-print c_cpu
-print c_cpu.shape
-# transfer host (CPU) memory to device (GPU) memory
-a_gpu = gpuarray.to_gpu(a_cpu)
+for mult in range(1,5):
+    totalLen = davidLen * mult
+    a = np.chararray(totalLen, )
+    appendDavid = appendDavid + david
+    for i in range(totalLen):
+        a[i] = appendDavid[i]
 
-# create empty gpu array for the result (C = A * B)
-c_gpu = gpuarray.empty(5, np.int32)
+    c_cpu = np.zeros(totalLen)
+    # transfer host (CPU) memory to device (GPU) memory
+    a_gpu = gpuarray.to_gpu(a_cpu)
 
-# compile the kernel code
-mod = compiler.SourceModule(kernel_code_template)
+    # create empty gpu array for the result (C = A * B)
+    c_gpu = gpuarray.empty(5, np.int32)
 
-# get the kernel function from the compiled module
-findhash = mod.get_function("findHash")
+    # compile the kernel code
+    mod = compiler.SourceModule(kernel_code_template)
 
-# call the kernel on the card
-findhash(
-    # inputs
-    a_gpu,
-    c_gpu,
-    # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
-    block = (5, 1, 1),grid = (1,1)
+    # get the kernel function from the compiled module
+    findhash = mod.get_function("findHash")
+
+    # call the kernel on the card
+    findhash(
+        # inputs
+        a_gpu,
+        c_gpu,
+        # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
+        block = (5, 1, 1),grid = (1,1)
     )
 
-# print the results
-print "Matrix A (GPU):"
-print a_gpu.get()
-
-
-print "Matrix C (GPU):"
-print c_gpu.get()
+    # print the results
+    print "A (GPU):"
+    print a_gpu.get()
+    print "Matrix C (GPU):"
+    print c_gpu.get()
