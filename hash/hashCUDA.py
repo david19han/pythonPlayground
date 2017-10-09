@@ -50,9 +50,8 @@ for mult in range(1,10000):
 
     # get the kernel function from the compiled module
     findhash = mod.get_function("findHash")
-    start = drv.Event()
-    end = drv.Event()
-    start.record
+
+    start = time.time()
     # call the kernel on the card
     findhash(
         # inputs
@@ -61,10 +60,9 @@ for mult in range(1,10000):
         # (only one) block of MATRIX_SIZE x MATRIX_SIZE threads
         block = (5, 1, 1),grid = (1,1)
     )
-    end.record
-    end.synchronize()
-    secs = start.time_till(end)*1e-3
-    times.append(secs)
+    end = time.time() - start
+    
+    times.append(end)
     x.append(totalLen)
 
     # print the results
