@@ -42,8 +42,10 @@ __kernel void func(__global char* a, __global int* c) {
 david = "david"
 davidLen = len(david)
 appendDavid = ""
+#hold the elapsed times for different lengths
 times = []
 x = []
+
 x.append(0)
 times.append(0)
 

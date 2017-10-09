@@ -24,6 +24,10 @@ for mult in range(1,20000):
     times.append(end)
     x.append(totalLen)
 
+#print results
+for i in range(0,10000):
+    print ("length: ", x[i],"| time: ",times[i])
+
 #plot
 import matplotlib as mpl
 mpl.use('agg')
