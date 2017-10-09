@@ -34,7 +34,7 @@ a_cpu[1] = 'a'
 a_cpu[2] = 'v'
 a_cpu[3] = 'i'
 a_cpu[4] = 'd'
-c_cpu = cl.array.empty(queue, a.shape, dt)
+c_cpu = np.zeros(5)
 # transfer host (CPU) memory to device (GPU) memory
 a_gpu = gpuarray.to_gpu(a_cpu)
 
