@@ -81,11 +81,11 @@ for mult in range(1,10):
         #record time elapsed
         end = time.time() - start
         times.append(end)
-        x.append(totalLen)
+    x.append(totalLen)
 
 
 #print results
-for i in range(1,totalLen-2):
+for i in range(1,len(x)):
     print ("length: ", x[i],"| time: ",times[i])
 
 #plot
