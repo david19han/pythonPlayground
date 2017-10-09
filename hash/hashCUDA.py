@@ -85,7 +85,7 @@ for mult in range(1,10):
     x.append(totalLen)
 
 #print results
-for i in range(1,totalLen-1):
+for i in range(1,totalLen-2):
     print ("length: ", x[i],"| time: ",times[i])
 
 #plot
