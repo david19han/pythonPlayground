@@ -69,14 +69,24 @@ hash.o: hash.c
 # And the "clean" target is not a file name, so we tell make that
 # it's a "phony" target.
 
-.PHONY: run
+.PHONY: runcl
 run:
 	rm slurm*
 	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
-.PHONY: run2
+.PHONY: runcl2
 run2:
 	rm slurm*
-	sbatch --gres=gpu:1 --time=3 --wrap="python vector_add2.py"
+	sbatch --gres=gpu:1 --time=3 --wrap="python hashOpenCL.py"
+
+.PHONY: runcuda
+run:
+	rm slurm*
+	sbatch --gres=gpu:1 --time=3 --wrap="python hashCUDA.py"
+.PHONY: runcuda2
+run2:
+	rm slurm*
+	sbatch --gres=gpu:1 --time=3 --wrap="python hashCUDA.py"
+
 .PHONY: clean
 clean:
 	rm -f *.o a.out core hash slurm*
