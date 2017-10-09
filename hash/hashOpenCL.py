@@ -38,7 +38,11 @@ __kernel void func(__global char* a, __global int* c) {
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
 a = np.chararray(5, )
-a[0: ] = "david"
+david = "david"
+for i in range(len(david)):
+    a[i] = david[i]
+    
+
 
 print a.shape
 print a.dtype
