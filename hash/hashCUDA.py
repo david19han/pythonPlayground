@@ -51,6 +51,7 @@ for mult in range(1,10000):
     # get the kernel function from the compiled module
     findhash = mod.get_function("findHash")
     start = drv.Event()
+    end = drv.Event()
     start.record
     # call the kernel on the card
     findhash(
