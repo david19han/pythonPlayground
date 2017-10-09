@@ -43,7 +43,7 @@ for mult in range(1,10000):
     a_gpu = gpuarray.to_gpu(a_cpu)
 
     # create empty gpu array for the result
-    c_gpu = gpuarray.empty(5, np.int32)
+    c_gpu = gpuarray.empty(totalLen, np.int32)
 
     # compile the kernel code
     mod = compiler.SourceModule(kernel_code_template)
