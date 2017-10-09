@@ -45,11 +45,11 @@ a[3] = 'i'
 a[4] = 'd'
 print a.shape
 print a.dtype
-a.dtype = "|S5"
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
 # GPU memory (and vice versa):
 a_gpu = cl.array.to_device(queue, a)
-c_gpu = cl.array.empty(queue, a.shape, int)
+dt = np.dtype(np.int32)
+c_gpu = cl.array.empty(queue, a.shape, dt)
 
 # Launch the kernel; notice that you must specify the global and locals to
 # determine how many threads of execution are run. We can take advantage of Numpy to
