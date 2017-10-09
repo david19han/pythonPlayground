@@ -16,7 +16,7 @@ kernel_code_template = """
 __global__ void findHash(char *a, int *c)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-    int j = (int) a[i];
+
     c[i] = 5;
 }
 """
