@@ -35,6 +35,10 @@ a_cpu[2] = 'v'
 a_cpu[3] = 'i'
 a_cpu[4] = 'd'
 c_cpu = np.zeros(5)
+print a_cpu
+print a_cpu.shape
+print c_cpu
+print c_cpu.shape
 # transfer host (CPU) memory to device (GPU) memory
 a_gpu = gpuarray.to_gpu(a_cpu)
 
