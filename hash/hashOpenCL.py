@@ -38,11 +38,8 @@ __kernel void func(__global char* a, __global int* c) {
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
 a = np.chararray(5, )
-a[0] = 'd'
-a[1] = 'a'
-a[2] = 'v'
-a[3] = 'i'
-a[4] = 'd'
+a[0: ] = "david"
+
 print a.shape
 print a.dtype
 # We can use PyOpenCL's Array type to easily transfer data from numpy arrays to
