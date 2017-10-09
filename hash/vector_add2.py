@@ -24,9 +24,10 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 # Define the OpenCL kernel you wish to run; most of the interesting stuff you
 # will be doing involves modifying or writing kernels:
 kernel = """
-__kernel void func(__global int* a, __global int* c) {
+__kernel void func(__global char* a, __global int* c) {
     unsigned int i = get_global_id(0);
     int j = (int) a[i];
+    printf("%d\n",j);
     c[i] = j % 17;
 }
 """
@@ -37,7 +38,7 @@ __kernel void func(__global int* a, __global int* c) {
 # run.  Note that Numerical Python uses names for certain types that differ from
 # those used in OpenCL. For example, np.float32 corresponds to the float type in
 # OpenCL:
-a = np.chararray(5,dtype='|S1')
+a = np.chararray(5, )
 a[0] = 'd'
 a[1] = 'a'
 a[2] = 'v'
