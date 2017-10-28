@@ -13,12 +13,12 @@ from pycuda import driver, compiler, gpuarray, tools
 import pycuda.autoinit
 
 kernel_code_template = """
+#include <stdio.h>
 __global__ void MatrixMulKernel(float *a, float *b, float *c)
 {
     // 2D Thread ID (assuming that only *one* block will be executed)
     int tx = threadIdx.x;
     int ty = threadIdx.y;
-    printf("tx is %d | ty is %d",tx,ty)
     // Pvalue is used to store the element of the matrix
     // that is computed by the thread
     float Pvalue = 0;
@@ -28,6 +28,7 @@ __global__ void MatrixMulKernel(float *a, float *b, float *c)
     for (int k = 0; k < 2; ++k) {
         float Aelement = a[ty * 2 + k];
         float Belement = b[k * 2 + tx];
+        printf("tx:%d,ty:%d,k:%d,Aindex:%d|Bindex:%d|A:%f|B:%f\\n",tx,ty,k,ty*2+k,k*2+tx,Aelement,Belement);
         Pvalue += Aelement * Belement;
     }
 
@@ -39,7 +40,6 @@ __global__ void MatrixMulKernel(float *a, float *b, float *c)
 
 # define the (square) matrix size
 #  note that we'll only use *one* block of threads here
-#  as a consequence this number (squared) can't exceed max_threads,
 #  see http://documen.tician.de/pycuda/util.html#pycuda.tools.DeviceData
 #  for more information on how to get this number for your device
 MATRIX_SIZE = 2
@@ -92,6 +92,4 @@ print c_gpu.get()
 
 print "-" * 80
 print "CPU-GPU difference:"
-print c_cpu - c_gpu.get()
-
-np.allclose(c_cpu, c_gpu.get())
+print c_cpu - c_gpu.get( 
