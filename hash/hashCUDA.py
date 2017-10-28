@@ -45,43 +45,9 @@ for mult in range(1,10000):
     # create empty gpu array for the result
     c_gpu = gpuarray.empty(totalLen, np.int32)
 
-    # compile the kernel code
-    mod = compiler.SourceModule(kernel_code_template)
-
-    # get the kernel function from the compiled module
-    findhash = mod.get_function("findHash")
-
-    #start timer
-
-    # call the kernel on the card
-    if(totalLen < 512):
-        start = time.time()
-        findhash(
-            # inputs
-            a_gpu,
-            c_gpu,
-            # (only one) block
-            block = (totalLen, 1, 1),grid = (1,1)
-        )
-        #record time elapsed
-        end = time.time() - start
-        times.append(end)
-    else:
-        start = time.time()
-        block_size = 512
-        grid_size = totalLen/block_size
-        block = (block_size,1,1)
-        grid = (grid_size,1)
-        findhash(
-            # inputs
-            a_gpu,
-            c_gpu,
-            block=block,grid=grid
-        )
-        #record time elapsed
-        end = time.time() - start
-        times.append(end)
-    x.append(totalLen)
+#    c_gpu = gpuarray.empty_like(david, np.int32)
+#np.array(list(namestr))
+#ascii_name = ord(npname)
 
 
 #print results
