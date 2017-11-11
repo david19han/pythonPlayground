@@ -11,12 +11,6 @@ import pycuda.driver as drv
 import time
 
 
-class TempVariables:
-    int maskWidth;
-    int numRows;
-    int numCols;
-    int stride
-
 
 #kernel code to find hash
 kernel_code_template = """
