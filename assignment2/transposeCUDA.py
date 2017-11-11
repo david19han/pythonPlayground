@@ -28,11 +28,10 @@ for matrixSize in range(2,11):
      a_gpu = gpuarray.to_gpu(a_cpu)
 
      c_gpu = gpuarray.empty((matrixSize,matrixSize), np.float32)
-     kernel_code = kernel_code_template % {
-         'MATRIX_SIZE': matrixSize
-         }
 
-     mod = compiler.SourceModule(kernel_code)
+
+     mod = compiler.SourceModule(kernel_code_template)
+
      matrixTranspose = mod.get_function("matrixTranspose")
 
      start = time.time()
