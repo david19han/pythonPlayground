@@ -13,7 +13,7 @@ import time
 #kernel code to find hash
 kernel_code_template = """
 #include <stdio.h>
-__global__ void DilateConKernel(float *input,float *output,float *mask, int maskWidth)
+__global__ void DilateConKernel(float *input,float *output,float* __restrict__ const mask)
 {
     int tx = threadIdx.x;
     int ty = threadIdx.y;
