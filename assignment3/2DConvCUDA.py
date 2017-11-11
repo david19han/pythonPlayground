@@ -29,12 +29,6 @@ numRows = 7
 numCols = 7
 stride = 1
 
-argTemp = TempVariables()
-argTemp.maskWidth = maskWidth
-argTemp.numRows = numRows
-argTemp.numCols = numCols
-argTemp.stride = stride 
-
 input_cpu = np.random.randn(numRows,numCols).astype(np.float32)
 output_cpu = np.random.randn(numRows,numCols).astype(np.float32)
 mask_cpu = np.random.randn(maskWidth,maskWidth).astype(np.float32)
