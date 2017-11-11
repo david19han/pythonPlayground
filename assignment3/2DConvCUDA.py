@@ -49,5 +49,5 @@ dilateConv(
     maskWidth,
     numCols,
     numRows,
-    block = (numRows,numCols, 1),
+    block = (4,4, 1),
 )
