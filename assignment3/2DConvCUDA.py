@@ -46,7 +46,6 @@ dilateConv(
     input_gpu,
     output_gpu,
     mask_gpu,
-    maskWidth,
     block = (4,4, 1),
     grid = grid
 )
