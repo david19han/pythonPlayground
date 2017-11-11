@@ -32,7 +32,7 @@ for matrixSize in range(2,11):
 
      mod = compiler.SourceModule(kernel_code_template)
 
-     matrixTranspose = mod.get_function("matrixTranspose")
+     matrixTranspose = mod.get_function("MatrixMulKernel")
 
      start = time.time()
      matrixTranspose(
