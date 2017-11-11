@@ -13,7 +13,7 @@ import time
 #kernel code to find hash
 kernel_code_template = """
 #include <stdio.h>
-__global__ void DilateConKernel(float *input,float *output,float *mask, int maskWidth, int width, int height)
+__global__ void DilateConKernel(float *input,float *output,float *mask)
 {
     int tx = threadIdx.x;
     int ty = threadIdx.y;
@@ -46,8 +46,5 @@ dilateConv(
     input_gpu,
     output_gpu,
     mask_gpu,
-    maskWidth,
-    numCols,
-    numRows,
     block = (4,4, 1),
 )
