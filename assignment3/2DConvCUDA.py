@@ -26,9 +26,10 @@ numRows = 7
 numCols = 7
 stride = 1
 
-input_cpu = np.random.rand(numRows,numCols).astype(np.float32)
-output_cpu = np.ones_like(input_cpu).astype(np.float32)
-mask_cpu = np.array([[-1,-2,-1],[0,0,0],[1,2,1]]).astype(np.float32)
+
+input_cpu = np.random.randn(numRows,numCols).astype(np.float32)
+output_cpu = np.random.randn(numRows,numCols).astype(np.float32)
+mask_cpu = np.random.randn(maskWidth,maskWidth).astype(np.float32)
 
 input_gpu = gpuarray.to_gpu(input_cpu)
 output_gpu = gpuarray.to_gpu(output_cpu)
@@ -48,5 +49,5 @@ dilateConv(
     maskWidth,
     numCols,
     numRows,
-    block = block,
+    block = (numRows,numCols, 1),
 )
