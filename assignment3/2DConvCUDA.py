@@ -52,7 +52,7 @@ block = (numRows,numCols,1)
 grid = (1,1)
 dilateConv(
     # inputs
-    maskWidth
+    maskWidth,
     input_gpu,
     output_gpu,
     mask_gpu,
