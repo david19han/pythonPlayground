@@ -20,7 +20,7 @@ __global__ void DilateConKernel(int maskWidth, float *input,float *output,float*
     int tx = threadIdx.x;
     int ty = threadIdx.y;
     printf("tx is %d | ty is %d",tx,ty);
-    printf("%d %d %d",MASK_WIDTH,ROWS,COLS);
+    //printf("%d %d %d",MASK_WIDTH,ROWS,COLS);
 }
 """
 
