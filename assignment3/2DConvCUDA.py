@@ -18,6 +18,7 @@ __global__ void DilateConKernel(float *input,float *output,float *mask, int mask
     int tx = threadIdx.x;
     int ty = threadIdx.y;
     printf("tx is %d | ty is %d",tx,ty);
+    printf("%d %d %d",MASK_WIDTH,ROWS,COLS);
 }
 """
 
@@ -35,7 +36,14 @@ input_gpu = gpuarray.to_gpu(input_cpu)
 output_gpu = gpuarray.to_gpu(output_cpu)
 mask_gpu = gpuarray.to_gpu(mask_cpu)
 
-mod = compiler.SourceModule(kernel_code_template)
+
+kernel_code = kernel_code_template % {
+         'MASK_WIDTH': maskWidth,
+         'ROWS' : numRows,
+         'COLS' : numCols
+         }
+
+mod = compiler.SourceModule(kernel_code)
 
 dilateConv = mod.get_function("DilateConKernel")
 
