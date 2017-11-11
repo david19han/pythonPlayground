@@ -92,4 +92,4 @@ print c_gpu.get()
 
 print "-" * 80
 print "CPU-GPU difference:"
-print c_cpu - c_gpu.get( 
+print c_cpu - c_gpu.get(
