@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import time
 import numpy as np
 from pycuda import driver, compiler, gpuarray, tools
 
