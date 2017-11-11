@@ -7,6 +7,7 @@ from pycuda import driver, compiler, gpuarray, tools
  # -- initialize the device
 import pycuda.autoinit
 
+MATRIX_SIZE = 4
 kernel_code_template = """
  #include <stdio.h>
  __global__ void MatrixMulKernel(float *a, float *c)
