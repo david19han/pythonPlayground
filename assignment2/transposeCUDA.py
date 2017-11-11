@@ -15,9 +15,7 @@ kernel_code_template = """
      int tx = threadIdx.x;
      int ty = threadIdx.y;
 
-     // Write the matrix to device memory;
-     // each thread writes one element
-     c[ty * %(MATRIX_SIZE)s + tx] = Pvalue;
+     printf("tx is %d|ty is %d",tx,ty);
  }
  """
 times = []
