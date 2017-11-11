@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
- import numpy as np
- from pycuda import driver, compiler, gpuarray, tools
+import numpy as np
+from pycuda import driver, compiler, gpuarray, tools
 
  # -- initialize the device
- import pycuda.autoinit
+import pycuda.autoinit
 
- kernel_code_template = """
+kernel_code_template = """
  #include <stdio.h>
  __global__ void MatrixMulKernel(float *a, float *c)
  {
@@ -20,10 +20,10 @@
      c[ty * %(MATRIX_SIZE)s + tx] = Pvalue;
  }
  """
- times = []
- matrixSize = []
+times = []
+matrixSize = []
 
- for matrixSize in range(2,11):
+for matrixSize in range(2,11):
      a_cpu = np.random.randn(MATRIX_SIZE, MATRIX_SIZE).astype(np.float32)
      a_gpu = gpuarray.to_gpu(a_cpu)
 
