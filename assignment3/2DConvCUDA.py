@@ -10,10 +10,18 @@ import pycuda.driver as drv
 
 import time
 
+
+class TempVariables:
+    int maskWidth;
+    int numRows;
+    int numCols;
+    int stride
+
+
 #kernel code to find hash
 kernel_code_template = """
 #include <stdio.h>
-__global__ void DilateConKernel(float *input,float *output,float* __restrict__ const mask)
+__global__ void DilateConKernel(int maskWidth, float *input,float *output,float* __restrict__ const mask)
 {
     int tx = threadIdx.x;
     int ty = threadIdx.y;
@@ -27,6 +35,11 @@ numRows = 7
 numCols = 7
 stride = 1
 
+argTemp = TempVariables()
+argTemp.maskWidth = maskWidth
+argTemp.numRows = numRows
+argTemp.numCols = numCols
+argTemp.stride = stride 
 
 input_cpu = np.random.randn(numRows,numCols).astype(np.float32)
 output_cpu = np.random.randn(numRows,numCols).astype(np.float32)
@@ -37,13 +50,7 @@ output_gpu = gpuarray.to_gpu(output_cpu)
 mask_gpu = gpuarray.to_gpu(mask_cpu)
 
 
-kernel_code = kernel_code_template % {
-         'MASK_WIDTH': maskWidth,
-         'ROWS' : numRows,
-         'COLS' : numCols
-         }
-
-mod = compiler.SourceModule(kernel_code)
+mod = compiler.SourceModule(kernel_code_template)
 
 dilateConv = mod.get_function("DilateConKernel")
 
@@ -51,6 +58,7 @@ block = (numRows,numCols,1)
 grid = (1,1)
 dilateConv(
     # inputs
+    maskWidth
     input_gpu,
     output_gpu,
     mask_gpu,
