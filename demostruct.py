@@ -74,7 +74,3 @@ func.prepared_call((1, 1),(32,1,1), do2_ptr)
 print "doubled second only again"
 print array1
 print array2
-
-}}}
-----
-CategoryPyCuda
