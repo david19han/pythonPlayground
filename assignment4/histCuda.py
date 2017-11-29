@@ -133,21 +133,33 @@ for i in xrange(len(hgram10)):
 #     print((hgram15[i]))
 
 #naive kernel
+# kernel_code_template = """
+# #include <stdio.h>
+# #include <math.h>
+
+# __global__ void naiveHisto(int *data,int* histogram,int size)
+# {
+#     int col = blockIdx.x * blockDim.x + threadIdx.x;
+#     int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+#     if(col < size && row < size){
+#         int index = col + row * size;
+#         int value = data[index];
+#         int bIndex = value/10;
+#         atomicAdd(&histogram[bIndex],1);
+#     }
+# }
+# """
+
 kernel_code_template = """
 #include <stdio.h>
 #include <math.h>
 
-__global__ void naiveHisto(int *data,int* histogram,int size)
+__global__ void naiveHisto(int* histogram,int size)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
-
-    if(col < size && row < size){
-        int index = col + row * size;
-        int value = data[index];
-        int bIndex = value/10;
-        atomicAdd(&histogram[bIndex],1);
-    }
+    
 }
 """
 
@@ -167,7 +179,7 @@ input_cpu = np.random.randint(179, size=(1024,1024),dtype='int32')
 input_gpu = gpuarray.to_gpu(input_cpu) 
 naiveHisto(
             # inputs
-            input_gpu,
+  #          input_gpu,
             output_gpu,
             matrixSize,
             block = (32,32,1),
