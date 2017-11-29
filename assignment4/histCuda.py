@@ -229,13 +229,22 @@ print(input_gpu.shape)
 print("David")
 c_gpu = gpuarray.empty((1024,1024), np.int32)
 print(c_gpu.shape)
+# naiveHisto(
+#             # inputs
+#             input_gpu, #1024x1024
+#             output_gpu,
+#             np.int32(matrixSize),
+#             block = (1024,1,1),
+#             grid = (1,1024)
+#             )
+
 naiveHisto(
             # inputs
             input_gpu, #1024x1024
             output_gpu,
             np.int32(matrixSize),
-            block = (1024,1,1),
-            grid = (1,1024)
+            block = (32,32,1),
+            grid = (32,32,1)
             )
 for i in xrange(len(hgram10)):
     print(output_gpu[i])
