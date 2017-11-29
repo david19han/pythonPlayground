@@ -1,6 +1,7 @@
 from tabulate import tabulate
 import numpy as np
- 
+import pandas as pd
+
 def CustomPrintTime(py_time, naive_time, opt_time):
 ## Print running time for cpu, naive and optimized algorithms
 ## Arguments: Each argument is a list of length 3 that contains the running times for three cases
@@ -98,3 +99,14 @@ def histogram(data, exponent = 10):
             bins[bin_idx,:] = hist[0]
     bins = bins.reshape(-1)
     return bins
+
+data = getData('hist_data.dat',0)
+hgram = histogram(data)
+
+CustomPrintHistogram(list(hgram))
+print(data.shape)
+print(len(hgram))
+for i in xrange(len(hgram)):
+    print((hgram[i]))
+
+
