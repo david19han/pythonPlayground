@@ -230,7 +230,7 @@ naiveHisto(
             np.int32(matrixSize),
             block = (1024,1,1),
             grid = (1024,1)
-            
+)
 print("Han")
 print(input_gpu[1023][1023])
 
