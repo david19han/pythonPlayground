@@ -155,17 +155,36 @@ for i in xrange(len(hgram10)):
 # }
 # """
 
+# kernel_code_template = """
+# #include <stdio.h>
+# #include <math.h>
+
+# __global__ void naiveHisto(int *data,int* histogram,int size)
+# {
+#     int col = blockIdx.x * blockDim.x + threadIdx.x;
+#     int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+#     if(col < size && row < size){
+#         int index = col + row * size;
+#         int value = data[index];
+#         int bIndex = value/10;
+#         if(bIndex<18){
+#             atomicAdd(&histogram[bIndex],1);
+#         }else{
+#             printf("Error %d %d %d",row,col,bIndex);
+#         }
+#     }    
+# }
+# """
 kernel_code_template = """
 #include <stdio.h>
 #include <math.h>
 
 __global__ void naiveHisto(int *data,int* histogram,int size)
 {
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
 
-    if(col < size && row < size){
-        int index = col + row * size;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    if(col < size){
         int value = data[index];
         int bIndex = value/10;
         if(bIndex<18){
@@ -178,7 +197,6 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 """
 
 
-
 # compile the kernel code
 mod = compiler.SourceModule(kernel_code_template)
 
@@ -189,7 +207,7 @@ naiveHisto = mod.get_function("naiveHisto")
 # create empty gpu array for the result
 output_gpu = gpuarray.empty(18, np.int32)
 #input_gpu = gpuarray.to_gpu(data0)
-matrixSize = 32
+matrixSize = 1024
 
 input_gpu = gpuarray.to_gpu(data0) 
 print(input_gpu.shape)
@@ -198,14 +216,21 @@ c_gpu = gpuarray.empty((1024,1024), np.int32)
 print(c_gpu.shape)
 # naiveHisto(
 #             # inputs
-#             input_gpu,
+#             input_gpu, #1024x1024
 #             output_gpu,
 #             np.int32(matrixSize),
 #             block = (1024,1,1),
 #             grid = (32,32)
 #             )
        
-
+naiveHisto(
+            # inputs
+            input_gpu, #1024x1024
+            output_gpu,
+            np.int32(matrixSize),
+            block = (1024,1,1),
+            grid = (1024,1)
+            )
 
 
 
