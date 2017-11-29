@@ -185,12 +185,12 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     if(col < size){
-        int value = data[index];
+        int value = data[col];
         int bIndex = value/10;
         if(bIndex<18){
             atomicAdd(&histogram[bIndex],1);
         }else{
-            printf("Error %d %d %d",row,col,bIndex);
+            printf("Error %d %d %d",col,bIndex);
         }
     }    
 }
