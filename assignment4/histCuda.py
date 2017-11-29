@@ -190,7 +190,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
         if(bIndex<18){
             atomicAdd(&histogram[bIndex],1);
         }else{
-            printf("Error %d %d %d",col,bIndex);
+            printf("Error %d %d",col,bIndex);
         }
     }    
 }
@@ -223,15 +223,15 @@ print(c_gpu.shape)
 #             grid = (32,32)
 #             )
        
-naiveHisto(
-            # inputs
-            input_gpu, #1024x1024
-            output_gpu,
-            np.int32(matrixSize),
-            block = (1024,1,1),
-            grid = (1024,1)
-            )
-
+# naiveHisto(
+#             # inputs
+#             input_gpu, #1024x1024
+#             output_gpu,
+#             np.int32(matrixSize),
+#             block = (1024,1,1),
+#             grid = (1024,1)
+#             
+print(input_gpu[1023][1023])
 
 
 
