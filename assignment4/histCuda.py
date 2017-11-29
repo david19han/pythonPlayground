@@ -189,7 +189,7 @@ naiveHisto = mod.get_function("naiveHisto")
 # create empty gpu array for the result
 output_gpu = gpuarray.empty(18, np.int32)
 #input_gpu = gpuarray.to_gpu(data0)
-matrixSize = pow(2,10)
+matrixSize = 32
 
 input_gpu = gpuarray.to_gpu(data0) 
 print(input_gpu.shape)
