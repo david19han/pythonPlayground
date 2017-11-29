@@ -177,37 +177,40 @@ for i in xrange(len(hgram10)):
 # }
 # """
 
-kernel_code_template = """
-#include <stdio.h>
-#include <math.h>
-
-__global__ void naiveHisto(int *data,int* histogram,int size)
-{
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
-
-    if(col < size && row < size){
-        int index = col + row * size;
-        int value = data[index];
-        int bIndex = value/10;
-        if(bIndex<18){
-            atomicAdd(&histogram[bIndex],1);
-        }else{
-            printf("Error%d",1);
-        }
-    }    
-}
-"""
-
 # kernel_code_template = """
 # #include <stdio.h>
 # #include <math.h>
 
 # __global__ void naiveHisto(int *data,int* histogram,int size)
 # {
-#     printf("Value is %d",data[threadIdx.x]);
+#     int col = blockIdx.x * blockDim.x + threadIdx.x;
+#     int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+#     if(col < size && row < size){
+#         int index = col + row * size;
+#         int value = data[index];
+#         int bIndex = value/10;
+#         if(bIndex<18){
+#             atomicAdd(&histogram[bIndex],1);
+#         }else{
+#             printf("Error%d",1);
+#         }
+#     }    
 # }
 # """
+
+kernel_code_template = """
+#include <stdio.h>
+#include <math.h>
+
+__global__ void naiveHisto(int *data,int* histogram,int size)
+{
+    printf("Value is %d",data[threadIdx.x]);
+    int value = data[threadIdx.x];
+    int bIndex = value/10;
+    printf("bIndex is %d\n",bIndex);
+}   
+"""
 
 # compile the kernel code
 mod = compiler.SourceModule(kernel_code_template)
@@ -231,8 +234,8 @@ naiveHisto(
             input_gpu, #1024x1024
             output_gpu,
             np.int32(matrixSize),
-            block = (1024,1,1),
-            grid = (1,1024)
+            block = (1,1,1),#block = (1024,1,1),
+            #grid = (1,1024)
             )
 for i in xrange(len(hgram10)):
     print(output_gpu[i])
