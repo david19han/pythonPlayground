@@ -176,26 +176,35 @@ for i in xrange(len(hgram10)):
 #     }    
 # }
 # """
+# kernel_code_template = """
+# #include <stdio.h>
+# #include <math.h>
+
+# __global__ void naiveHisto(int *data,int* histogram,int size)
+# {
+
+#     int col = blockIdx.x * blockDim.x + threadIdx.x;
+#     if(col < size){
+#         int value = data[col];
+#         int bIndex = value/10;
+#         if(bIndex<18){
+#             atomicAdd(&histogram[bIndex],1);
+#         }else{
+#             printf("Error %d %d",col,bIndex);
+#         }
+#     }    
+# }
+# """
+
 kernel_code_template = """
 #include <stdio.h>
 #include <math.h>
 
 __global__ void naiveHisto(int *data,int* histogram,int size)
 {
-
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-    if(col < size){
-        int value = data[col];
-        int bIndex = value/10;
-        if(bIndex<18){
-            atomicAdd(&histogram[bIndex],1);
-        }else{
-            printf("Error %d %d",col,bIndex);
-        }
-    }    
+    printf("Value is %d",data[threadIdx.x]);
 }
 """
-
 
 # compile the kernel code
 mod = compiler.SourceModule(kernel_code_template)
@@ -228,8 +237,7 @@ naiveHisto(
             input_gpu, #1024x1024
             output_gpu,
             np.int32(matrixSize),
-            block = (1024,1,1),
-            grid = (1024,1)
+            block = (1,1,1)
 )
 print("Han")
 print(input_gpu[1023][1023])
