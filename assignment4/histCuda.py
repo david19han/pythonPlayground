@@ -124,4 +124,20 @@ print(len(hgram15))
 for i in xrange(len(hgram15)):
     print((hgram15[i]))
 
+#naive kernel
+kernel_code_template = """
+#include <stdio.h>
+#include <math.h>
+
+__global__ void naiveHisto(const char* const data,int* histogram)
+{
+    int id_x = blockidx.x * blockDim.x + threadIdx.x;
+    int id_y = blockidx.y * blockDim.y + threadIdx.y;
+
+    int index = floor(x/10);
+    atomicAdd(&histogram[index],1);
+
+}
+"""
+
 
