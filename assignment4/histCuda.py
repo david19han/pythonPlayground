@@ -194,16 +194,17 @@ matrixSize = 32
 input_gpu = gpuarray.to_gpu(data0) 
 print(input_gpu.shape)
 print("David")
-
-print(input_gpu[20][20])
+c_gpu = gpuarray.empty((1024,1024), np.int32)
+print(c_gpu.shape)
 # naiveHisto(
 #             # inputs
 #             input_gpu,
 #             output_gpu,
 #             np.int32(matrixSize),
-#             block = (32,32,1),
+#             block = (1024,1,1),
 #             grid = (32,32)
-#         
+#             )
+       
 
 
 
