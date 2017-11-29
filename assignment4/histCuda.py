@@ -129,15 +129,41 @@ kernel_code_template = """
 #include <stdio.h>
 #include <math.h>
 
-__global__ void naiveHisto(const char* const data,int* histogram)
+__global__ void naiveHisto(const int* const data,int* histogram,int size)
 {
-    int id_x = blockidx.x * blockDim.x + threadIdx.x;
-    int id_y = blockidx.y * blockDim.y + threadIdx.y;
+    int col = blockidx.x * blockDim.x + threadIdx.x;
+    int row = blockidx.y * blockDim.y + threadIdx.y;
 
-    int index = floor(x/10);
-    atomicAdd(&histogram[index],1);
-
+    if(col < size && row < size){
+        int index = col + row * size;
+        int value = data[index];
+        int bIndex = floor(value/10);
+        atomicAdd(&histogram[bIndex],1);
+    }
 }
 """
+
+# compile the kernel code
+mod = compiler.SourceModule(kernel_code_template)
+
+# get the kernel function from the compiled module
+naiveHisto = mod.get_function("naiveHisto")
+
+#outputHist = np.zeros(18,dtype=np.int32)
+# create empty gpu array for the result
+output_gpu = gpuarray.empty(18, np.int32)
+
+matrixSize = pow(2,10)
+findhash(
+            # inputs
+            data0,
+            output_gpu,
+            block = (matrixSize,matrixSize, 1),
+        )
+
+
+
+
+
 
 
