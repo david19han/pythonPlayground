@@ -248,4 +248,5 @@ naiveHisto(
             )
 for i in xrange(len(hgram10)):
     print(output_gpu[i])
-print(np.all(output_gpu == hgram10.astype('int32')))
+#print(np.all(output_gpu == hgram10.astype('int32')))
+print(hgram10.astype('int32'))
