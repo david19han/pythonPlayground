@@ -218,7 +218,7 @@ output_gpu = gpuarray.empty(18, np.int32)
 #input_gpu = gpuarray.to_gpu(data0)
 matrixSize = 1024
 
-input_gpu = gpuarray.to_gpu(data0) 
+input_gpu = gpuarray.to_gpu(data0.astype('int32')) 
 print(input_gpu.shape)
 print("David")
 c_gpu = gpuarray.empty((1024,1024), np.int32)
@@ -239,9 +239,6 @@ naiveHisto(
             np.int32(matrixSize),
             block = (1,1,1)
 )
-print("Han")
-print(input_gpu[1023][1023])
-
 
 
 
