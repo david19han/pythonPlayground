@@ -208,7 +208,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
     printf("Value is %d",data[threadIdx.x]);
     int value = data[threadIdx.x];
     int bIndex = value/10;
-    printf("bIndex is %d\n",bIndex);
+    printf("bIndex is %d",bIndex);
 }   
 """
 
@@ -220,7 +220,7 @@ naiveHisto = mod.get_function("naiveHisto")
 
 #outputHist = np.zeros(18,dtype=np.int32)
 # create empty gpu array for the result
-output_gpu = gpuarray.empty(18, np.int32)
+output_gpu = gpuarray.zeros(18, np.int32)
 #input_gpu = gpuarray.to_gpu(data0)
 matrixSize = 1024
 
