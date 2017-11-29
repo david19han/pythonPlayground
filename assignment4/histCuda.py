@@ -254,6 +254,5 @@ print(output_gpu)
 
 print(np.array_equal(output_gpu,hgram10.astype('int32')))
 
-
-
-print(np.array_equal(output_gpu,hgram10.astype('int32')))
+print(type(output_gpu))
+print(type(hgram10.astype('int32')))
