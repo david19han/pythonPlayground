@@ -1,5 +1,13 @@
-from tabulate import tabulate
 import numpy as np
+from pycuda import driver, compiler, gpuarray, tools
+
+# -- initialize the device
+import pycuda.autoinit
+import pycuda.driver as drv
+
+import time
+
+from tabulate import tabulate
 import pandas as pd
 
 def CustomPrintTime(py_time, naive_time, opt_time):
