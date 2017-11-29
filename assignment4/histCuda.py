@@ -108,21 +108,21 @@ print(len(hgram10))
 for i in xrange(len(hgram10)):
     print((hgram10[i]))
 
-data1 = getData('hist_data.dat',1)
-hgram13 = histogram(data1,13)
-CustomPrintHistogram(list(hgram13))
-print(data1.shape)
-print(len(hgram13))
-for i in xrange(len(hgram13)):
-    print((hgram13[i]))
+# data1 = getData('hist_data.dat',1)
+# hgram13 = histogram(data1,13)
+# CustomPrintHistogram(list(hgram13))
+# print(data1.shape)
+# print(len(hgram13))
+# for i in xrange(len(hgram13)):
+#     print((hgram13[i]))
 
-data2 = getData('hist_data.dat',2)
-hgram15 = histogram(data2,15)
-CustomPrintHistogram(list(hgram15))
-print(data2.shape)
-print(len(hgram15))
-for i in xrange(len(hgram15)):
-    print((hgram15[i]))
+# data2 = getData('hist_data.dat',2)
+# hgram15 = histogram(data2,15)
+# CustomPrintHistogram(list(hgram15))
+# print(data2.shape)
+# print(len(hgram15))
+# for i in xrange(len(hgram15)):
+#     print((hgram15[i]))
 
 #naive kernel
 kernel_code_template = """
