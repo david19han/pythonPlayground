@@ -197,14 +197,14 @@ print("David")
 
 for i in xrange(5):
     print(input_gpu[i][i])
-# naiveHisto(
-#             # inputs
-#             input_gpu,
-#             output_gpu,
-#             np.int32(matrixSize),
-#             block = (32,32,1),
-#             grid = (32,32)
-#         )
+naiveHisto(
+            # inputs
+            input_gpu,
+            output_gpu,
+            np.int32(matrixSize),
+            block = (32,32,1),
+            grid = (32,32)
+        )
 
 
 
