@@ -137,15 +137,15 @@ kernel_code_template = """
 #include <stdio.h>
 #include <math.h>
 
-__global__ void naiveHisto(const int* const data,int* histogram,int size)
+__global__ void naiveHisto(int *data,int* histogram,int size)
 {
-    int col = blockidx.x * blockDim.x + threadIdx.x;
-    int row = blockidx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
 
     if(col < size && row < size){
         int index = col + row * size;
         int value = data[index];
-        int bIndex = floor(value/10);
+        int bIndex = value/10;
         atomicAdd(&histogram[bIndex],1);
     }
 }
@@ -160,15 +160,20 @@ naiveHisto = mod.get_function("naiveHisto")
 #outputHist = np.zeros(18,dtype=np.int32)
 # create empty gpu array for the result
 output_gpu = gpuarray.empty(18, np.int32)
-
+#input_gpu = gpuarray.to_gpu(data0)
 matrixSize = pow(2,10)
-findhash(
-            # inputs
-            data0,
-            output_gpu,
-            block = (matrixSize,matrixSize, 1),
-        )
 
+input_cpu = np.random.randint(179, size=(1024,1024),dtype='int32')
+input_gpu = gpuarray.to_gpu(input_cpu) 
+naiveHisto(
+            # inputs
+            input_gpu,
+            output_gpu,
+            matrixSize,
+            block = (32,32,1),
+            grid = (32,32)
+        )
+print(output_gpu)
 
 
 

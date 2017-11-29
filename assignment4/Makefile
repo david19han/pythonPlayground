@@ -6,7 +6,6 @@ runcuda:
 	sbatch --gres=gpu:1 --time=8 --wrap="python histCuda.py"
 .PHONY: clean
 clean:
-	rm -f *.o a.out core hash slurm*
+	rm -f *.o a.out core slurm*
 .PHONY:all
-all:
-	clean runcuda
+all: clean runcuda
