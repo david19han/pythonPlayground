@@ -171,7 +171,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
         if(bIndex<18){
             atomicAdd(&histogram[bIndex],1);
         }else{
-            printf("Error %d", bIndex);
+            printf("Error %d %d", index,bIndex);
         }
     }    
 }
