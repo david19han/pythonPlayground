@@ -223,14 +223,15 @@ print(c_gpu.shape)
 #             grid = (32,32)
 #             )
        
-# naiveHisto(
-#             # inputs
-#             input_gpu, #1024x1024
-#             output_gpu,
-#             np.int32(matrixSize),
-#             block = (1024,1,1),
-#             grid = (1024,1)
-#             
+naiveHisto(
+            # inputs
+            input_gpu, #1024x1024
+            output_gpu,
+            np.int32(matrixSize),
+            block = (1024,1,1),
+            grid = (1024,1)
+            
+print("Han")
 print(input_gpu[1023][1023])
 
 
