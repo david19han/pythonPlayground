@@ -234,4 +234,5 @@ naiveHisto(
             block = (1024,1,1),
             grid = (1,1024)
             )
-
+for i in xrange(len(hgram10)):
+    print(output_gpu[i])
