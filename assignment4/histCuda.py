@@ -113,20 +113,20 @@ def histogram(data, exponent = 10):
 # hgram10 = histogram(data0)
 # CustomPrintHistogram(list(hgram10))
 
-print("Sequential 2^13x2^13")
-data1 = getData('hist_data.dat',1)
-hgram13 = histogram(data1)
-CustomPrintHistogram(list(hgram13[:18]))
-len13 = len(hgram13)
-CustomPrintHistogram(list(hgram13[18:36]))
-CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
-
-# print("Sequential 2^15x2^15")
-# data2 = getData('hist_data.dat',2)
-# hgram15 = histogram(data2)
-# CustomPrintHistogram(list(hgram15[:18]))
+# print("Sequential 2^13x2^13")
+# data1 = getData('hist_data.dat',1)
+# hgram13 = histogram(data1)
+# CustomPrintHistogram(list(hgram13[:18]))
 # len13 = len(hgram13)
+# CustomPrintHistogram(list(hgram13[18:36]))
 # CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
+
+print("Sequential 2^15x2^15")
+data2 = getData('hist_data.dat',2)
+hgram15 = histogram(data2)
+CustomPrintHistogram(list(hgram15[:18]))
+len13 = len(hgram13)
+CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
 
 kernel_code_template = """
@@ -199,7 +199,7 @@ blockSize = 32
 
 # print("GPU for Medium Matrix:")
 # med_gpu = gpuarray.zeros(medBins,np.int32)
-input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
+# input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 # naiveHisto(
 #             # inputs
 #             input_gpu_med, 
@@ -214,7 +214,7 @@ input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 
 # print("GPU for Large Matrix:")
 # large_gpu = gpuarray.zeros(largeBins,np.int32)
-# input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
+input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
 # naiveHisto(
 #             # inputs
 #             input_gpu_large, #1024x1024
@@ -285,20 +285,32 @@ optoHisto = mod.get_function("optimizeHisto")
 #             )
 # print(np.array_equal(small_gpu_opt.get(),hgram10.astype('int32')))
 
-med_gpu_opt = gpuarray.zeros(medBins, np.int32)
-print("Optimized GPU for Medium Matrix:")
-optoHisto(
-            # inputs
-            input_gpu_med, 
-            med_gpu_opt,
-            np.int32(medMatrix),
-            block = (blockSize,blockSize,1),
-            grid = (medMatrix/blockSize,medMatrix/blockSize,1)
-            )
-print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
+# med_gpu_opt = gpuarray.zeros(medBins, np.int32)
+# print("Optimized GPU for Medium Matrix:")
+# optoHisto(
+#             # inputs
+#             input_gpu_med, 
+#             med_gpu_opt,
+#             np.int32(medMatrix),
+#             block = (blockSize,blockSize,1),
+#             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
+#             )
+# print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
 # CustomPrintHistogram(med_gpu_opt.get()[:18])
 # print("optGPU")
 # CustomPrintHistogram(med_gpu_opt.get()[18:36])
 # CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
+
+large_gpu_opt = gpuarray.zeros(largeBins, np.int32)
+print("Optimized GPU for Medium Matrix:")
+optoHisto(
+            # inputs
+            input_gpu_large, 
+            large_gpu_opt,
+            np.int32(largeMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
+            )
+print(np.array_equal(large_gpu_opt.get(),hgram15.astype('int32')))
 
 
