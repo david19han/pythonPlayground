@@ -151,18 +151,18 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
 # }
 # """
 
-print("Sequential 2^10x2^10")
-data0 = getData('hist_data.dat',0)
-hgram10 = histogram(data0)
-CustomPrintHistogram(list(hgram10))
+# print("Sequential 2^10x2^10")
+# data0 = getData('hist_data.dat',0)
+# hgram10 = histogram(data0)
+# CustomPrintHistogram(list(hgram10))
 
-# print("Sequential 2^13x2^13")
-# data1 = getData('hist_data.dat',1)
-# hgram13 = histogram(data1)
-# CustomPrintHistogram(list(hgram13[:18]))
-# len13 = len(hgram13)
-# CustomPrintHistogram(list(hgram13[18:36]))
-# CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
+print("Sequential 2^13x2^13")
+data1 = getData('hist_data.dat',1)
+hgram13 = histogram(data1)
+CustomPrintHistogram(list(hgram13[:18]))
+len13 = len(hgram13)
+CustomPrintHistogram(list(hgram13[18:36]))
+CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
 # print("Sequential 2^15x2^15")
 # data2 = getData('hist_data.dat',2)
@@ -179,17 +179,25 @@ smallMatrix = 1024
 medMatrix = np.power(2,13)
 largeMatrix = np.power(2,15)
 
-print("GPU for Small Matrix:")
-input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
-output_gpu_small = cl.array.empty(queue, (18,), 'int32')
+# print("Naive GPU for Small Matrix:")
+# input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
+# output_gpu_small = cl.array.empty(queue, (18,), 'int32')
+
+# prg = cl.Program(ctx, naiveKernel).build()
+# prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
+
+# print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
+# CustomPrintHistogram(output_gpu_small.get()[:18])
+
+print("Naive GPU for Medium Matrix:")
+input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
+output_gpu_med = cl.array.empty(queue, (18,), 'int32')
 
 prg = cl.Program(ctx, naiveKernel).build()
-prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
+prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
 
+print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
 
-print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
-CustomPrintHistogram(output_gpu_small.get()[:18])
-# output_gpu_small = cl.array.empty(queue, (18,), 'int32')
-# prg = cl.Program(ctx, naiveKernel).build()
-# prg.func(queue,1,18,output_gpu_small.data,np.int32(smallMatrix))
+print("Naive GPU for Large Matrix:")
+
 
