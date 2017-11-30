@@ -254,17 +254,6 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
     if(threadIdx.x < 19 && threadIdx.y==0){
         atomicAdd(&globalHisto[threadIdx.x],localHisto[threadIdx.x]);
     }
-
-
-    if(col < size && row < size){
-        int index = col + row * size;
-        int value = data[index];
-        int bIndex = value/10;
-
-        int binRegion = index/(1024*1024);
-        bIndex += binRegion*18;
-        atomicAdd(&globalHisto[bIndex],1);
-    }    
 }
 """
 
