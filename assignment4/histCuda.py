@@ -180,11 +180,10 @@ largeMatrix = np.power(2,15)
 mod = compiler.SourceModule(kernel_code_template)
 # get the kernel function from the compiled module
 naiveHisto = mod.get_function("naiveHisto")
-
-small_gpu = gpuarray.zeros(smallBins, np.int32)
-input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
-
 blockSize = 32
+
+# small_gpu = gpuarray.zeros(smallBins, np.int32)
+# input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
 
 # print("GPU for Small Matrix:")
 # naiveHisto(
