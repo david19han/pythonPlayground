@@ -190,15 +190,15 @@ largeMatrix = np.power(2,15)
 
 print("Naive GPU for Medium Matrix:")
 input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
-output_gpu_med = cl.array.empty(queue, (18,), 'int32')
+output_gpu_med = cl.array.empty(queue, (medBins,), 'int32')
 
 prg = cl.Program(ctx, naiveKernel).build()
 prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
 
 print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
-print(len(output_gpu_med.get()))
-# CustomPrintHistogram(output_gpu_med.get()[:18])
-# CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
+# print(len(output_gpu_med.get()))
+CustomPrintHistogram(output_gpu_med.get()[:18])
+CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
 
 
 print("Naive GPU for Large Matrix:")
