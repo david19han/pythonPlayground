@@ -119,7 +119,7 @@ for i in xrange(len(hgram10)):
     print((hgram10[i]))
 
 data1 = getData('hist_data.dat',1)
-hgram13 = histogram(data1,13)
+hgram13 = histogram(data1
 CustomPrintHistogram(list(hgram13))
 print(data1.shape)
 print(len(hgram13))
