@@ -144,6 +144,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 
         int binRegion = index/(1024*1024);
         bIndex += binRegion*18;
+
         atomicAdd(&histogram[bIndex],1);
     }    
 }
@@ -181,16 +182,16 @@ input_gpu_small = gpuarray.to_gpu(data0.astype('int32'))
 
 blockSize = 32
 
-print("GPU for Small Matrix:")
-naiveHisto(
-            # inputs
-            input_gpu_small, #1024x1024
-            small_gpu,
-            np.int32(smallMatrix),
-            block = (blockSize,blockSize,1),
-            grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
-            )
-print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
+# print("GPU for Small Matrix:")
+# naiveHisto(
+#             # inputs
+#             input_gpu_small, #1024x1024
+#             small_gpu,
+#             np.int32(smallMatrix),
+#             block = (blockSize,blockSize,1),
+#             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
+#             )
+# print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
 
 print("GPU for Medium Matrix:")
 med_gpu = gpuarray.zeros(medBins,np.int32)
@@ -203,19 +204,40 @@ naiveHisto(
             block = (blockSize,blockSize,1),
             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
             )
-print(np.array_equal(med_gpu.get(),hgram10.astype('int32')))
+print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
 
-print("GPU for Large Matrix:")
-large_gpu = gpuarray.zeros(largeBins,np.int32)
-input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
-naiveHisto(
-            # inputs
-            input_gpu_large, #1024x1024
-            large_gpu,
-            np.int32(largeMatrix),
-            block = (blockSize,blockSize,1),
-            grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
-            )
-print(np.array_equal(large_gpu.get(),hgram10.astype('int32')))
+# print("GPU for Large Matrix:")
+# large_gpu = gpuarray.zeros(largeBins,np.int32)
+# input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
+# naiveHisto(
+#             # inputs
+#             input_gpu_large, #1024x1024
+#             large_gpu,
+#             np.int32(largeMatrix),
+#             block = (blockSize,blockSize,1),
+#             grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
+#             )
+# print(np.array_equal(large_gpu.get(),hgram10.astype('int32')))
+
+kernel_opt_template = """
+#include <stdio.h>
+#include <math.h>
+
+__global__ void naiveHisto(int *data,int* histogram,int size)
+{
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if(col < size && row < size){
+        int index = col + row * size;
+        int value = data[index];
+        int bIndex = value/10;
+
+        int binRegion = index/(1024*1024);
+        bIndex += binRegion*18;
+        atomicAdd(&histogram[bIndex],1);
+    }    
+}
+"""
 
 
