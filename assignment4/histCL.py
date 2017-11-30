@@ -224,9 +224,6 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
         atomic_Add(&localHisto[bIndex],1);
     }
 
-    barrier(CLK_LOCAL_MEM_FENCE);
-
-   
 }
 """
 
