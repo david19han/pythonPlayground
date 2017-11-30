@@ -98,6 +98,8 @@ def histogram(data, exponent = 10):
  
     base = np.power(2, exponent).astype(np.int32)
     side = int(data.shape[0] / base)
+    print("side")
+    print(side)
     num_bins = side**2
     bins = np.zeros((num_bins, 18))
     for i in range(side):
