@@ -302,7 +302,7 @@ optoHisto = mod.get_function("optimizeHisto")
 # CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
 
 large_gpu_opt = gpuarray.zeros(largeBins, np.int32)
-print("Optimized GPU for Medium Matrix:")
+print("Optimized GPU for Large Matrix:")
 optoHisto(
             # inputs
             input_gpu_large, 
