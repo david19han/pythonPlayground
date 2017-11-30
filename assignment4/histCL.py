@@ -121,7 +121,7 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 # Define the OpenCL kernel you wish to run; most of the interesting stuff you
 # will be doing involves modifying or writing kernels:
 naiveKernel = """
-__kernel void func(__global int* data, __global int* histo, int size) {
+__kernel void func(__global int* data, __global int* histogram, int size) {
     int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
     int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
     
