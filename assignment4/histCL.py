@@ -124,10 +124,17 @@ naiveKernel = """
 __kernel void func(__global int* data, __global int* histogram, int size) {
     int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
     int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
-    
+        
+
+
+
     if(col<size && row < size){
         int index = col + row * size;
         int value = data[index];
+
+        if(index < 10){
+            printf("row %d col %d index %d value %d",row,col,index,value);
+        }
         int bIndex = value/10;
 
         int rowRegion = row/1024;
@@ -137,7 +144,7 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
 
         int binRegion = colRegion + rowRegion * numBox;
         bIndex += binRegion*18;
-        atomic_inc(&histogram[bIndex]);
+        atomic_add(&histogram[bIndex],1);
     }
 }
 """
@@ -213,6 +220,8 @@ prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu
 print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 CustomPrintHistogram(output_gpu_small.get()[:18])
 
+for i in xrange(10):
+    print(input_gpu_small.get()[0][i])
 
 # print("Naive GPU for Medium Matrix:")
 # input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
