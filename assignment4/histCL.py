@@ -215,7 +215,9 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
         localHisto[i] = 0;
     }
 
-   
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    
 }
 """
 
