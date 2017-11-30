@@ -161,7 +161,6 @@ data1 = getData('hist_data.dat',1)
 hgram13 = histogram(data1)
 CustomPrintHistogram(list(hgram13[:18]))
 len13 = len(hgram13)
-CustomPrintHistogram(list(hgram13[18:36]))
 CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
 # print("Sequential 2^15x2^15")
@@ -197,6 +196,9 @@ prg = cl.Program(ctx, naiveKernel).build()
 prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
 
 print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
+CustomPrintHistogram(output_gpu_med.get()[:18])
+CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
+
 
 print("Naive GPU for Large Matrix:")
 
