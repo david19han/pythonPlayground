@@ -126,7 +126,7 @@ data2 = getData('hist_data.dat',2)
 hgram15 = histogram(data2)
 len15 = len(hgram15)
 CustomPrintHistogram(list(hgram15[:18]))
-CustomPrintHistogram(list(hgram13[len15-18:len15+1]))
+CustomPrintHistogram(list(hgram15[len15-18:len15+1]))
 
 
 kernel_code_template = """
