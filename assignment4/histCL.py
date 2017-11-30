@@ -237,7 +237,7 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
         int binRegion = colRegion + rowRegion * numBox;
         int gIndex = get_local_id(0) + binRegion*18;
 
-        atomicAdd(&histogram[gIndex],localHisto[get_local_id(0)]);
+        //atomicAdd(&histogram[gIndex],localHisto[get_local_id(0)]);
     }
 }
 """
