@@ -212,7 +212,8 @@ largeMatrix = np.power(2,15)
 
 print("Naive GPU for Small Matrix:")
 input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
-output_gpu_small = cl.array.empty(queue, (18,), 'int32')
+output_gpu_zeros_small = np.zeros(18,'int32') 
+output_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
 
 prg = cl.Program(ctx, naiveKernel).build()
 
