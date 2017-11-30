@@ -221,7 +221,7 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
         int index = col + row * size;
         int value = data[index];
         int bIndex = value/10;
-        atomic_Add(&localHisto[bIndex],1);
+        //atomic_Add(&localHisto[bIndex],1);
     }
 
     barrier(CLK_LOCAL_MEM_FENCE);
