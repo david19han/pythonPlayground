@@ -148,18 +148,10 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
     int i = get_group_id(1)*get_group_size(1) + get_local_id(1);
     int j = get_group_id(0)*get_group_size(0) + get_local_id(0);
 
-    if(col<size && row < size){
+    if(i<size && j< size){
         int index = j*size + i;
         int value = data[index];
         int bIndex = value/10;
-
-        int rowRegion = row/1024;
-        int colRegion = col/1024;
-
-        int numBox = size/1024;
-
-        int binRegion = colRegion + rowRegion * numBox;
-        bIndex += binRegion*18;
 
         atomic_add(&histogram[bIndex],1);
     }
