@@ -198,7 +198,7 @@ blockSize = 32
 
 # print("GPU for Medium Matrix:")
 # med_gpu = gpuarray.zeros(medBins,np.int32)
-# input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
+input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 # naiveHisto(
 #             # inputs
 #             input_gpu_med, 
