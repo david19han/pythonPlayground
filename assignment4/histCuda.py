@@ -250,8 +250,19 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
     }
     __syncthreads();
 
+
+    //index into right 18 bin set 
+
     if(threadIdx.x < 19 && threadIdx.y==0){
-        atomicAdd(&globalHisto[threadIdx.x],localHisto[threadIdx.x]);
+
+        int rowRegion = row/1024;
+        int colRegion = col/1024;
+
+        int numBox = size/1024;
+        int binRegion = colRegion + rowRegion * numBox;
+        int gIndex = threadIdx.x + binRegion*18;
+        
+        atomicAdd(&globalHisto[gIndex],localHisto[threadIdx.x]);
     }
 }
 """
@@ -284,5 +295,6 @@ optoHisto(
             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
             )
 print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
+
 
 
