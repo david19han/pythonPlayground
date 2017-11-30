@@ -222,8 +222,25 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
         int value = data[index];
         int bIndex = value/10;
         atomic_Add(&localHisto[bIndex],1);
+        barrier(CLK_LOCAL_MEM_FENCE);
     }
+    barrier(CLK_LOCAL_MEM_FENCE);
 
+    
+
+   //index into right 18 bin set 
+
+    if(get_local_id(0) < 19 && get_local_id(1)==0){
+
+        int rowRegion = row/1024;
+        int colRegion = col/1024;
+
+        int numBox = size/1024;
+        int binRegion = colRegion + rowRegion * numBox;
+        int gIndex = get_local_id(0) + binRegion*18;
+
+        atomicAdd(&histogram[gIndex],localHisto[get_local_id(0)]);
+    }
 }
 """
 
