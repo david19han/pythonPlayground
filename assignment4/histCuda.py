@@ -142,7 +142,10 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
         int value = data[index];
         int bIndex = value/10;
 
-        int binRegion = index/(1024*1024);
+        int rowRegion = row/1024;
+        int colRegion = col/1024;
+
+        int binRegion = rowRegion * colRegion;
         bIndex += binRegion*18;
 
         atomicAdd(&histogram[bIndex],1);
