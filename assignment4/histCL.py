@@ -120,35 +120,18 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 
 # Define the OpenCL kernel you wish to run; most of the interesting stuff you
 # will be doing involves modifying or writing kernels:
-# naiveKernel = """
-# __kernel void func(__global int* data, __global int* histogram, int size) {
-#     int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
-#     int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
-    
-#     if(col<size && row < size){
-#         int index = col + row * size;
-#         int value = data[index];
-#         int bIndex = value/10;
-
-#         int rowRegion = row/1024;
-#         int colRegion = col/1024;
-
-#         int numBox = size/1024;
-
-#         int binRegion = colRegion + rowRegion * numBox;
-#         bIndex += binRegion*18;
-
-#         atomic_add(&histogram[bIndex],1);
-#     }
-# }
-# """
-
 naiveKernel = """
-__kernel void func(int size) {
-    printf("block size %d %d",get_local_size(0),get_local_size(1));
-    printf("num blocks %d %d",get_num_groups(0),get_num_groups(1));
+__kernel void func(__global int* data, int size) {
+    
 }
 """
+
+# naiveKernel = """
+# __kernel void func(int size) {
+#     printf("block size %d %d",get_local_size(0),get_local_size(1));
+#     printf("num blocks %d %d",get_num_groups(0),get_num_groups(1));
+# }
+# """
 
 print("Sequential 2^10x2^10")
 data0 = getData('hist_data.dat',0)
@@ -184,7 +167,7 @@ output_gpu_small = cl.array.empty(queue, (18,), 'int32')
 
 prg = cl.Program(ctx, naiveKernel).build()
 # prg.func(queue,(smallMatrix/32,smallMatrix/32),(32,32),input_gpu_small,output_gpu_small,np.int32(smallMatrix))
-prg.func(queue,(smallMatrix/32,smallMatrix/32),(32,32),np.int32(smallMatrix))
+prg.func(queue,(smallMatrix/32,smallMatrix/32),(32,32),input_gpu_small,np.int32(smallMatrix))
 
 print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 
