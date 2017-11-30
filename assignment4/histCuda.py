@@ -185,16 +185,16 @@ input_gpu_small = gpuarray.to_gpu(data0.astype('int32'))
 
 blockSize = 32
 
-# print("GPU for Small Matrix:")
-# naiveHisto(
-#             # inputs
-#             input_gpu_small, #1024x1024
-#             small_gpu,
-#             np.int32(smallMatrix),
-#             block = (blockSize,blockSize,1),
-#             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
-#             )
-# print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
+print("GPU for Small Matrix:")
+naiveHisto(
+            # inputs
+            input_gpu_small, #1024x1024
+            small_gpu,
+            np.int32(smallMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
+            )
+print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
 
 print("GPU for Medium Matrix:")
 med_gpu = gpuarray.zeros(medBins,np.int32)
