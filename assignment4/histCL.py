@@ -124,17 +124,11 @@ naiveKernel = """
 __kernel void func(__global int* data, __global int* histogram, int size) {
     int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
     int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
-        
-
-
 
     if(col<size && row < size){
         int index = col + row * size;
         int value = data[index];
 
-        if(index < 10){
-            printf("row %d col %d index %d value %d",row,col,index,value);
-        }
         int bIndex = value/10;
 
         int rowRegion = row/1024;
@@ -148,39 +142,7 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
     }
 }
 """
-# kernel_code_template = """
-# #include <stdio.h>
-# #include <math.h>
 
-# __global__ void naiveHisto(int *data,int* histogram,int size)
-# {
-#     int col = blockIdx.x * blockDim.x + threadIdx.x;
-#     int row = blockIdx.y * blockDim.y + threadIdx.y;
-
-#     if(col < size && row < size){
-#         int index = col + row * size;
-#         int value = data[index];
-#         int bIndex = value/10;
-
-#         int rowRegion = row/1024;
-#         int colRegion = col/1024;
-
-#         int numBox = size/1024;
-
-#         int binRegion = colRegion + rowRegion * numBox;
-#         bIndex += binRegion*18;
-
-#         atomicAdd(&histogram[bIndex],1);
-#     }    
-# }
-# """
-
-# naiveKernel = """
-# __kernel void func(__global int* histogram) {
-#     int j = get_group_id(0)*get_group_size(0) + get_local_id(0);
-#     histogram[j] = j;
-# }
-# """
 
 
 print("Sequential 2^10x2^10")
@@ -188,12 +150,12 @@ data0 = getData('hist_data.dat',0)
 hgram10 = histogram(data0)
 CustomPrintHistogram(list(hgram10))
 
-# print("Sequential 2^13x2^13")
-# data1 = getData('hist_data.dat',1)
-# hgram13 = histogram(data1)
-# CustomPrintHistogram(list(hgram13[:18]))
-# len13 = len(hgram13)
-# CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
+print("Sequential 2^13x2^13")
+data1 = getData('hist_data.dat',1)
+hgram13 = histogram(data1)
+CustomPrintHistogram(list(hgram13[:18]))
+len13 = len(hgram13)
+CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
 # print("Sequential 2^15x2^15")
 # data2 = getData('hist_data.dat',2)
@@ -212,29 +174,23 @@ largeMatrix = np.power(2,15)
 
 print("Naive GPU for Small Matrix:")
 input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
-output_gpu_zeros_small = np.zeros(18,'int32') 
+output_gpu_zeros_small = np.zeros(smallBins,'int32') 
 output_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
 
 prg = cl.Program(ctx, naiveKernel).build()
 
 prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
 print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
-CustomPrintHistogram(output_gpu_small.get()[:18])
 
-for i in xrange(10):
-    print(input_gpu_small.get()[0][i])
+print("Naive GPU for Medium Matrix:")
+input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
+output_gpu_zeros_med = np.zeros(medBins,'int32') 
+output_gpu_med = cl.array.to_device(queue,output_gpu_zeros_med.astype('int32'))
 
-# print("Naive GPU for Medium Matrix:")
-# input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
-# output_gpu_med = cl.array.empty(queue, (medBins,), 'int32')
+prg = cl.Program(ctx, naiveKernel).build()
+prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
 
-# prg = cl.Program(ctx, naiveKernel).build()
-# prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
-
-# print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
-# # print(len(output_gpu_med.get()))
-# CustomPrintHistogram(output_gpu_med.get()[:18])
-# CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
+print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
 
 
 print("Naive GPU for Large Matrix:")
