@@ -183,8 +183,8 @@ mod = compiler.SourceModule(kernel_code_template)
 naiveHisto = mod.get_function("naiveHisto")
 blockSize = 32
 
-# small_gpu = gpuarray.zeros(smallBins, np.int32)
-# input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
+small_gpu = gpuarray.zeros(smallBins, np.int32)
+input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
 
 print("GPU for Small Matrix:")
 naiveHisto(
