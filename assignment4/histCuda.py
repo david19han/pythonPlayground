@@ -296,6 +296,8 @@ optoHisto(
             )
 print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
 CustomPrintHistogram(med_gpu_opt.get()[:18])
+print("optGPU")
+CustomPrintHistogram(med_gpu_opt.get()[18:37])
 CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
 
 
