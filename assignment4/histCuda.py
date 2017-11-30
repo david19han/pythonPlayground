@@ -145,7 +145,9 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
         int rowRegion = row/1024;
         int colRegion = col/1024;
 
-        int binRegion = rowRegion * colRegion;
+        int numBox = size/1024;
+
+        int binRegion = colRegion + rowRegion * numBox;
         bIndex += binRegion*18;
 
         atomicAdd(&histogram[bIndex],1);
@@ -176,7 +178,6 @@ largeMatrix = np.power(2,15)
 
 # compile the kernel code
 mod = compiler.SourceModule(kernel_code_template)
-
 # get the kernel function from the compiled module
 naiveHisto = mod.get_function("naiveHisto")
 
@@ -201,7 +202,7 @@ med_gpu = gpuarray.zeros(medBins,np.int32)
 input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 naiveHisto(
             # inputs
-            input_gpu_med, #1024x1024
+            input_gpu_med, 
             med_gpu,
             np.int32(medMatrix),
             block = (blockSize,blockSize,1),
