@@ -175,8 +175,8 @@ print("GPU for Small Matrix:")
 input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
 output_gpu_small = cl.array.empty(queue, (18,), 'int32')
 
-prg = cl.Program(ctx, kernel).build()
-prg.naiveKernel(queue,(smallMatrix/32,smallMatrix/32),(32,32),input_gpu_small,output_gpu_small,np.int32(smallMatrix))
+prg = cl.Program(ctx, naiveKernel).build()
+prg.func(queue,(smallMatrix/32,smallMatrix/32),(32,32),input_gpu_small,output_gpu_small,np.int32(smallMatrix))
 
 print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 
