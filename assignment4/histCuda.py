@@ -208,32 +208,61 @@ blockSize = 32
 #             block = (blockSize,blockSize,1),
 #             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
 #             )
-# print("David")
 # CustomPrintHistogram(list(hgram13[:18]))
 # CustomPrintHistogram(med_gpu.get()[:18])
 # print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
 
-print("GPU for Large Matrix:")
-large_gpu = gpuarray.zeros(largeBins,np.int32)
-input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
-naiveHisto(
-            # inputs
-            input_gpu_large, #1024x1024
-            large_gpu,
-            np.int32(largeMatrix),
-            block = (blockSize,blockSize,1),
-            grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
-            )
-print(np.array_equal(large_gpu.get(),hgram15.astype('int32')))
+# print("GPU for Large Matrix:")
+# large_gpu = gpuarray.zeros(largeBins,np.int32)
+# input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
+# naiveHisto(
+#             # inputs
+#             input_gpu_large, #1024x1024
+#             large_gpu,
+#             np.int32(largeMatrix),
+#             block = (blockSize,blockSize,1),
+#             grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
+#             )
+# print(np.array_equal(large_gpu.get(),hgram15.astype('int32')))
+
 
 kernel_opt_template = """
 #include <stdio.h>
 #include <math.h>
 
-__global__ void naiveHisto(int *data,int* histogram,int size)
+__global__ void optimizeHisto(int *data,int* globalHisto,int size)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+
+    __shared__ unsigned int localHisto[18];
+
+    for(int i = 0;i<18:i++){
+        localHisto[i] = 0;
+    }
+    __syncthreads();
+
+    if(col<size && row<size){
+        int index = col + row * size;
+        int value = data[index];
+        int bIndex = value/10;
+
+        int rowRegion = row/1024;
+        int colRegion = col/1024;
+
+        int numBox = size/1024;
+
+        int binRegion = colRegion + rowRegion * numBox;
+        bIndex += binRegion*18;
+        atomicAdd(&localHisto[bIndex],1);
+    }
+    __syncthreads();
+
+    if(threadIdx.x < 19 && threadIdx.y==0){
+        atomicAdd(&globalHisto[threadIdx.x],localHisto[threadIdx.x]);
+    }
+
 
     if(col < size && row < size){
         int index = col + row * size;
@@ -246,5 +275,24 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
     }    
 }
 """
+
+# compile the kernel code
+mod = compiler.SourceModule(kernel_opt_template)
+# get the kernel function from the compiled module
+optHisto = mod.get_function("optimizeHisto")
+
+small_gpu_opt = gpuarray.zeros(smallBins, np.int32)
+print("Optimized GPU for Small Matrix:")
+optoHisto(
+            # inputs
+            input_gpu_small, 
+            small_gpu_opt,
+            np.int32(smallMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
+            )
+print(np.array_equal(small_gpu_opt.get(),hgram10.astype('int32')))
+
+
 
 
