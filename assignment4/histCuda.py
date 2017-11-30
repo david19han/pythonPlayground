@@ -207,8 +207,9 @@ naiveHisto(
             block = (blockSize,blockSize,1),
             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
             )
-print(hgram13[:18])
-print(med_gpu[:18])
+print("David")
+CustomPrintHistogram(list(hgram13[:18]))
+CustomPrintHistogram(med_gpu.get()[:18])
 print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
 
 # print("GPU for Large Matrix:")
