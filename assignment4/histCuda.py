@@ -247,14 +247,6 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
         int index = col + row * size;
         int value = data[index];
         int bIndex = value/10;
-
-        int rowRegion = row/1024;
-        int colRegion = col/1024;
-
-        int numBox = size/1024;
-
-        int binRegion = colRegion + rowRegion * numBox;
-        bIndex += binRegion*18;
         atomicAdd(&localHisto[bIndex],1);
     }
     __syncthreads();
