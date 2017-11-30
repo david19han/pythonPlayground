@@ -261,7 +261,7 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
         int numBox = size/1024;
         int binRegion = colRegion + rowRegion * numBox;
         int gIndex = threadIdx.x + binRegion*18;
-        
+
         atomicAdd(&globalHisto[gIndex],localHisto[threadIdx.x]);
     }
 }
@@ -295,6 +295,7 @@ optoHisto(
             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
             )
 print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
-
+CustomPrintHistogram(med_gpu_opt.get()[:18])
+CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
 
 
