@@ -144,6 +144,32 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
     }
 }
 """
+# kernel_code_template = """
+# #include <stdio.h>
+# #include <math.h>
+
+# __global__ void naiveHisto(int *data,int* histogram,int size)
+# {
+#     int col = blockIdx.x * blockDim.x + threadIdx.x;
+#     int row = blockIdx.y * blockDim.y + threadIdx.y;
+
+#     if(col < size && row < size){
+#         int index = col + row * size;
+#         int value = data[index];
+#         int bIndex = value/10;
+
+#         int rowRegion = row/1024;
+#         int colRegion = col/1024;
+
+#         int numBox = size/1024;
+
+#         int binRegion = colRegion + rowRegion * numBox;
+#         bIndex += binRegion*18;
+
+#         atomicAdd(&histogram[bIndex],1);
+#     }    
+# }
+# """
 
 # naiveKernel = """
 # __kernel void func(__global int* histogram) {
