@@ -98,8 +98,6 @@ def histogram(data, exponent = 10):
  
     base = np.power(2, exponent).astype(np.int32)
     side = int(data.shape[0] / base)
-    print("side")
-    print(side)
     num_bins = side**2
     bins = np.zeros((num_bins, 18))
     for i in range(side):
@@ -143,11 +141,10 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
         int index = col + row * size;
         int value = data[index];
         int bIndex = value/10;
-        if(bIndex<18){
-            atomicAdd(&histogram[bIndex],1);
-        }else{
-            printf("Error%d",1);
-        }
+
+        int binRegion = index/(1024*1024);
+        bIndex += binRegion*18;
+        atomicAdd(&histogram[bIndex],1);
     }    
 }
 """
@@ -189,4 +186,4 @@ naiveHisto(
             block = (blockSize,blockSize,1),
             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
             )
-print(np.array_equal(output_gpu.get(),hgram10.astype('int32')))
+print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
