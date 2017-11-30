@@ -151,10 +151,10 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
 # }
 # """
 
-# print("Sequential 2^10x2^10")
-# data0 = getData('hist_data.dat',0)
-# hgram10 = histogram(data0)
-# CustomPrintHistogram(list(hgram10))
+print("Sequential 2^10x2^10")
+data0 = getData('hist_data.dat',0)
+hgram10 = histogram(data0)
+CustomPrintHistogram(list(hgram10))
 
 print("Sequential 2^13x2^13")
 data1 = getData('hist_data.dat',1)
