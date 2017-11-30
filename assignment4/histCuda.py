@@ -110,27 +110,25 @@ def histogram(data, exponent = 10):
     bins = bins.reshape(-1)
     return bins
 
+print("Sequential 2^10x2^10")
 data0 = getData('hist_data.dat',0)
 hgram10 = histogram(data0)
 CustomPrintHistogram(list(hgram10))
-print(data0.shape)
-print(len(hgram10))
-for i in xrange(len(hgram10)):
-    print((hgram10[i]))
 
+print("Sequential 2^13x2^13")
 data1 = getData('hist_data.dat',1)
 hgram13 = histogram(data1)
 CustomPrintHistogram(list(hgram13[:18]))
 len13 = len(hgram13)
 CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
-# data2 = getData('hist_data.dat',2)
-# hgram15 = histogram(data2,15)
-# CustomPrintHistogram(list(hgram15))
-# print(data2.shape)
-# print(len(hgram15))
-# for i in xrange(len(hgram15)):
-#     print((hgram15[i]))
+print("Sequential 2^15x2^15")
+data2 = getData('hist_data.dat',2)
+hgram15 = histogram(data2)
+CustomPrintHistogram(list(hgram15[:18]))
+len13 = len(hgram13)
+CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
+
 
 kernel_code_template = """
 #include <stdio.h>
@@ -167,23 +165,28 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 # }   
 # """
 
+smallBins = 18
+medBins = 18*64
+largeBins = 18*1024
+
+smallMatrix = 1024
+
 # compile the kernel code
 mod = compiler.SourceModule(kernel_code_template)
 
 # get the kernel function from the compiled module
 naiveHisto = mod.get_function("naiveHisto")
 
-output_gpu = gpuarray.zeros(18, np.int32)
-matrixSize = 1024
-input_gpu = gpuarray.to_gpu(data0.astype('int32')) 
-c_gpu = gpuarray.empty((1024,1024), np.int32)
+small_gpu = gpuarray.zeros(smallBins, np.int32)
+input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
 
+blockSize = 32
 naiveHisto(
             # inputs
-            input_gpu, #1024x1024
-            output_gpu,
-            np.int32(matrixSize),
-            block = (32,32,1),
-            grid = (32,32,1)
+            input_gpu_small, #1024x1024
+            small_gpu,
+            np.int32(smallMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
             )
 print(np.array_equal(output_gpu.get(),hgram10.astype('int32')))
