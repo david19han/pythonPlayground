@@ -279,7 +279,7 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
 # compile the kernel code
 mod = compiler.SourceModule(kernel_opt_template)
 # get the kernel function from the compiled module
-optHisto = mod.get_function("optimizeHisto")
+optoHisto = mod.get_function("optimizeHisto")
 
 small_gpu_opt = gpuarray.zeros(smallBins, np.int32)
 print("Optimized GPU for Small Matrix:")
