@@ -117,7 +117,7 @@ def histogram(data, exponent = 10):
 # data1 = getData('hist_data.dat',1)
 # hgram13 = histogram(data1)
 # CustomPrintHistogram(list(hgram13[:18]))
-# len13 = len(hgram13)
+len13 = len(hgram13)
 # CustomPrintHistogram(list(hgram13[18:36]))
 # CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
@@ -125,7 +125,6 @@ print("Sequential 2^15x2^15")
 data2 = getData('hist_data.dat',2)
 hgram15 = histogram(data2)
 CustomPrintHistogram(list(hgram15[:18]))
-len13 = len(hgram13)
 CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
 
