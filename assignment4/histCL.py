@@ -122,8 +122,8 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 # will be doing involves modifying or writing kernels:
 naiveKernel = """
 __kernel void func(__global int* data, __global int* histogram, int size) {
-    int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
-    int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
+    int row = get_group_id(0) * get_local_size(0) + get_local_id(0);
+    int col = get_group_id(1) * get_local_size(1) + get_local_id(1);
     
     if(col<size && row < size){
         int index = col + row * size;
@@ -183,7 +183,7 @@ input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
 output_gpu_small = cl.array.empty(queue, (18,), 'int32')
 
 prg = cl.Program(ctx, naiveKernel).build()
-prg.func(queue,(smallMatrix/32,smallMatrix/32),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
+prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
 
 print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 CustomPrintHistogram(output_gpu_small.get()[:18])
