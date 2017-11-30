@@ -256,6 +256,6 @@ opt_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
 prg = cl.Program(ctx, optKernel).build()
 
 prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,opt_gpu_small.data,np.int32(smallMatrix))
-print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
+print(np.array_equal(opt_gpu_small.get(),hgram10.astype('int32')))
 
 
