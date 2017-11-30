@@ -144,7 +144,6 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 # """
 
 naiveKernel = """
-#include <stdio.h>
 __kernel void func(int size) {
     printf("block size %d %d",get_local_size(0),get_local_size(1));
     printf("num blocks %d %d",get_num_groups(0),get_num_groups(1))
