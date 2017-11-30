@@ -143,19 +143,29 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 # }
 # """
 
-
 naiveKernel = """
-#pragma OPENCL EXTENSION cl_amd_printf: enable
 __kernel void func(__global int* data, __global int* histogram, int size) {
-        int posx = get_global_id(1);
-        int posy = get_global_id(0);
-        int index = size*posy + posx;
+    int i = get_group_id(1)*get_group_size(1) + get_local_id(1);
+    int j = get_group_id(0)*get_group_size(0) + get_local_id(0);
+
+    if(col<size && row < size){
+        int index = j*size + i;
         int value = data[index];
         int bIndex = value/10;
+
+        int rowRegion = row/1024;
+        int colRegion = col/1024;
+
+        int numBox = size/1024;
+
+        int binRegion = colRegion + rowRegion * numBox;
+        bIndex += binRegion*18;
+
         atomic_add(&histogram[bIndex],1);
-    
+    }
 }
 """
+
 
 print("Sequential 2^10x2^10")
 data0 = getData('hist_data.dat',0)
