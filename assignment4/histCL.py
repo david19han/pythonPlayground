@@ -145,16 +145,15 @@ queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_EN
 
 
 naiveKernel = """
+#pragma OPENCL EXTENSION cl_amd_printf: enable
 __kernel void func(__global int* data, __global int* histogram, int size) {
-    int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
-    int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
-    
-    if(col<size && row < size){
-        int index = col + row * size;
+        int posx = get_global_id(1);
+        int posy = get_global_id(0);
+        int index = size*posy + posx;
         int value = data[index];
         int bIndex = value/10;
         atomic_add(&histogram[bIndex],1);
-    }
+    
 }
 """
 
