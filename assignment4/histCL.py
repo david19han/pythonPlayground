@@ -172,15 +172,15 @@ smallMatrix = 1024
 medMatrix = np.power(2,13)
 largeMatrix = np.power(2,15)
 
-# print("Naive GPU for Small Matrix:")
-# input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
-# output_gpu_zeros_small = np.zeros(smallBins,'int32') 
-# output_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
+print("Naive GPU for Small Matrix:")
+input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
+output_gpu_zeros_small = np.zeros(smallBins,'int32') 
+output_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
 
-# prg = cl.Program(ctx, naiveKernel).build()
+prg = cl.Program(ctx, naiveKernel).build()
 
-# prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
-# print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
+prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
+print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 
 # print("Naive GPU for Medium Matrix:")
 # input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
@@ -222,11 +222,9 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
         int value = data[index];
         int bIndex = value/10;
         atomic_Add(&localHisto[bIndex],1);
-        barrier(CLK_LOCAL_MEM_FENCE);
     }
-    barrier(CLK_LOCAL_MEM_FENCE);
 
-    
+    barrier(CLK_LOCAL_MEM_FENCE);
 
    //index into right 18 bin set 
 
