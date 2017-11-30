@@ -137,10 +137,7 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
 
         int binRegion = colRegion + rowRegion * numBox;
         bIndex += binRegion*18;
-        if(bIndex<19){
-            atomic_add(&histogram[bIndex],1);
-        }
-        
+        atomic_inc(&histogram[bIndex]);
     }
 }
 """
