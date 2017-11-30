@@ -178,15 +178,15 @@ smallMatrix = 1024
 medMatrix = np.power(2,13)
 largeMatrix = np.power(2,15)
 
-# print("Naive GPU for Small Matrix:")
-# input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
-# output_gpu_small = cl.array.empty(queue, (18,), 'int32')
+print("Naive GPU for Small Matrix:")
+input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
+output_gpu_small = cl.array.empty(queue, (18,), 'int32')
 
-# prg = cl.Program(ctx, naiveKernel).build()
-# prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
+prg = cl.Program(ctx, naiveKernel).build()
+prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
 
-# print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
-# CustomPrintHistogram(output_gpu_small.get()[:18])
+print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
+CustomPrintHistogram(output_gpu_small.get()[:18])
 
 print("Naive GPU for Medium Matrix:")
 input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
