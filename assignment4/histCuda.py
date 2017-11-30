@@ -238,7 +238,7 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
 
     __shared__ unsigned int localHisto[18];
 
-    for(int i = 0;i<18:i++){
+    for(int i = 0;i<18;i++){
         localHisto[i] = 0;
     }
     __syncthreads();
@@ -271,7 +271,7 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
 
         int binRegion = index/(1024*1024);
         bIndex += binRegion*18;
-        atomicAdd(&histogram[bIndex],1);
+        atomicAdd(&globalHisto[bIndex],1);
     }    
 }
 """
