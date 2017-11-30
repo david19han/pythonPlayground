@@ -135,7 +135,7 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
 
         int numBox = size/1024;
 
-        int binRegion = colRegion + rowRegion * numBox;
+        int binRegion = rowRegion + colRegion * numBox;//colRegion + rowRegion * numBox;
         bIndex += binRegion*18;
 
         atomic_add(&histogram[bIndex],1);
