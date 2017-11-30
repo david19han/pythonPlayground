@@ -116,13 +116,11 @@ print(len(hgram10))
 for i in xrange(len(hgram10)):
     print((hgram10[i]))
 
-# data1 = getData('hist_data.dat',1)
-# hgram13 = histogram(data1,13)
-# CustomPrintHistogram(list(hgram13))
-# print(data1.shape)
-# print(len(hgram13))
-# for i in xrange(len(hgram13)):
-#     print((hgram13[i]))
+data1 = getData('hist_data.dat',1)
+hgram13 = histogram(data1,13)
+CustomPrintHistogram(list(hgram13))
+print(data1.shape)
+print(len(hgram13))
 
 # data2 = getData('hist_data.dat',2)
 # hgram15 = histogram(data2,15)
@@ -131,51 +129,6 @@ for i in xrange(len(hgram10)):
 # print(len(hgram15))
 # for i in xrange(len(hgram15)):
 #     print((hgram15[i]))
-
-#naive kernel
-# kernel_code_template = """
-# #include <stdio.h>
-# #include <math.h>
-
-# __global__ void naiveHisto(int *data,int* histogram,int size)
-# {
-#     int col = blockIdx.x * blockDim.x + threadIdx.x;
-#     int row = blockIdx.y * blockDim.y + threadIdx.y;
-
-#     if(col < size && row < size){
-#         int index = col + row * size;
-#         int value = data[index];
-#         int bIndex = value/10;
-#         if(bIndex<18){
-#             atomicAdd(&histogram[bIndex],1);
-#         }else{
-#             printf("Error%d",1);
-#         }
-#     }    
-# }
-# """
-
-# kernel_code_template = """
-# #include <stdio.h>
-# #include <math.h>
-
-# __global__ void naiveHisto(int *data,int* histogram,int size)
-# {
-#     int col = blockIdx.x * blockDim.x + threadIdx.x;
-#     int row = blockIdx.y * blockDim.y + threadIdx.y;
-
-#     if(col < size && row < size){
-#         int index = col + row * size;
-#         int value = data[index];
-#         int bIndex = value/10;
-#         if(bIndex<18){
-#             atomicAdd(&histogram[bIndex],1);
-#         }else{
-#             printf("Error %d %d %d",row,col,bIndex);
-#         }
-#     }    
-# }
-# """
 
 kernel_code_template = """
 #include <stdio.h>
@@ -218,25 +171,10 @@ mod = compiler.SourceModule(kernel_code_template)
 # get the kernel function from the compiled module
 naiveHisto = mod.get_function("naiveHisto")
 
-#outputHist = np.zeros(18,dtype=np.int32)
-# create empty gpu array for the result
 output_gpu = gpuarray.zeros(18, np.int32)
-#input_gpu = gpuarray.to_gpu(data0)
 matrixSize = 1024
-
 input_gpu = gpuarray.to_gpu(data0.astype('int32')) 
-print(input_gpu.shape)
-print("David")
 c_gpu = gpuarray.empty((1024,1024), np.int32)
-print(c_gpu.shape)
-# naiveHisto(
-#             # inputs
-#             input_gpu, #1024x1024
-#             output_gpu,
-#             np.int32(matrixSize),
-#             block = (1024,1,1),
-#             grid = (1,1024)
-#             )
 
 naiveHisto(
             # inputs
@@ -246,13 +184,4 @@ naiveHisto(
             block = (32,32,1),
             grid = (32,32,1)
             )
-for i in xrange(len(hgram10)):
-    print(output_gpu[i])
-#print(np.all(output_gpu == hgram10.astype('int32')))
-print(hgram10.astype('int32'))
-print(output_gpu)
-
 print(np.array_equal(output_gpu.get(),hgram10.astype('int32')))
-
-print(type(output_gpu))
-print(type(hgram10.astype('int32')))
