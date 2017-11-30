@@ -120,9 +120,9 @@ for i in xrange(len(hgram10)):
 
 data1 = getData('hist_data.dat',1)
 hgram13 = histogram(data1)
-# CustomPrintHistogram(list(hgram13))
-print(data1.shape)
-print(len(hgram13))
+CustomPrintHistogram(list(hgram13[:18]))
+len13 = len(hgram13)
+CustomPrintHistogram(list(hgram13[len13-18:len13]))
 
 # data2 = getData('hist_data.dat',2)
 # hgram15 = histogram(data2,15)
