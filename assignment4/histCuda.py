@@ -291,6 +291,8 @@ optoHisto(
             block = (blockSize,blockSize,1),
             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
             )
+for i in xrange(18):
+    print(small_gpu_opt.get()[i])
 print(np.array_equal(small_gpu_opt.get(),hgram10.astype('int32')))
 
 
