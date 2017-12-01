@@ -353,6 +353,7 @@ input_gpu_large = cl.array.to_device(queue,data2.astype('int32'))
 output_gpu_zeros_large = np.zeros(largeBins,'int32') 
 opt_gpu_large = cl.array.to_device(queue,output_gpu_zeros_large.astype('int32'))
 
+start=time.time()
 prg = cl.Program(ctx, optKernel).build()
 optiTimes.append(time.time()-start)
 prg.func(queue,(largeMatrix,largeMatrix),(32,32),input_gpu_large.data,opt_gpu_large.data,np.int32(largeMatrix))
@@ -396,7 +397,36 @@ import matplotlib as mpl
 mpl.use('agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+
+#####################  
+plt.gcf() 
+plt.plot(arraysize_x, seqTimes, 'r')
+plt.xlabel('Array Size')
+plt.ylabel('SeqTime')
+plt.gca().set_ylim((min(seqTimes),max(seqTimes)))
+plt.legend(handles=[])
+plt.savefig('SeqCL.png')
+
+#####################  
+plt.gcf() 
+plt.plot(arraysize_x, naiveTimes, 'r')
+plt.xlabel('Array Size')
+plt.ylabel('NaiveTime')
+plt.legend(handles=[])
+plt.gca().set_ylim((min(naiveTimes),max(naiveTimes)))
+plt.savefig('NaiveCL.png')
+
+##################### 
+plt.gcf()  
+plt.plot(arraysize_x, optiTimes, 'r')
+plt.xlabel('Array Size')
+plt.ylabel('OptimizedTime')
+plt.gca().set_ylim((min(optiTimes),max(optTimes)))
+plt.legend(handles=[])
+plt.savefig('OptimizedCL.png')
+
 # red dashes, blue squares and green triangles
+plt.gcf()  
 plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
 plt.xlabel('Array Size')
 plt.ylabel('Time')
@@ -410,7 +440,7 @@ handles.append(red_patch)
 handles.append(blue_patch)
 handles.append(green_patch)
 plt.legend(handles=handles)
-plt.savefig('OpenCL.png')
+plt.savefig('CUDA.png')
 
 
 # plt.gcf()
