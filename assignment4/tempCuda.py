@@ -206,7 +206,7 @@ input_gpu_small = gpuarray.to_gpu(data0.astype('int32'))
 # print "-" * 80
 # print("GPU for Medium Matrix:")
 med_gpu = gpuarray.zeros(medBins,np.int32)
-# input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
+input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 # start = time.time()
 # naiveHisto(
 #             # inputs
@@ -224,7 +224,7 @@ med_gpu = gpuarray.zeros(medBins,np.int32)
 # print "-" * 80
 # print("GPU for Large Matrix:")
 large_gpu = gpuarray.zeros(largeBins,np.int32)
-# input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
+input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
 # start = time.time()
 # naiveHisto(
 #             # inputs
