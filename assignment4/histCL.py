@@ -166,6 +166,8 @@ hgram10 = histogram(data0)
 seqTimes.append(time.time()-start)
 CustomPrintHistogram(list(hgram10))
 
+print "-" * 80
+
 print("Sequential 2^13x2^13")
 data1 = getData('hist_data.dat',1)
 start = time.time()
@@ -174,6 +176,8 @@ seqTimes.append(time.time()-start)
 CustomPrintHistogram(list(hgram13[:18]))
 len13 = len(hgram13)
 CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
+
+print "-" * 80
 
 print("Sequential 2^15x2^15")
 data2 = getData('hist_data.dat',2)
@@ -200,6 +204,8 @@ naiveTimes.append(time.time()-start)
 CustomPrintHistogram(output_gpu_small.get()[:18])
 print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 
+print "-" * 80
+
 print("Naive GPU for Medium Matrix:")
 input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
 output_gpu_zeros_med = np.zeros(medBins,'int32') 
@@ -213,6 +219,7 @@ CustomPrintHistogram(output_gpu_med.get()[:18])
 CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
 print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
 
+print "-" * 80
 
 print("Naive GPU for Large Matrix:")
 input_gpu_large = cl.array.to_device(queue,data2.astype('int32'))
@@ -282,6 +289,8 @@ optiTimes.append(time.time()-start)
 CustomPrintHistogram(opt_gpu_small.get()[:18])
 print(np.array_equal(opt_gpu_small.get(),hgram10.astype('int32')))
 
+print "-" * 80
+
 print("Optimized GPU for Medium Matrix:")
 input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
 output_gpu_zeros_med = np.zeros(medBins,'int32') 
@@ -296,6 +305,7 @@ CustomPrintHistogram(opt_gpu_med.get()[:18])
 CustomPrintHistogram(opt_gpu_med.get()[len13-18:len13+1])
 print(np.array_equal(opt_gpu_med.get(),hgram13.astype('int32')))
 
+print "-" * 80
 
 print("Optimized GPU for Large Matrix:")
 input_gpu_large = cl.array.to_device(queue,data2.astype('int32'))
@@ -313,6 +323,15 @@ print(np.array_equal(opt_gpu_large.get(),hgram15.astype('int32')))
 print "-" * 80
 print("Custom Print Time")
 CustomPrintTime(seqTimes,naiveTimes,optiTimes)
+print "-" * 80
+print("SeqTimes: ")
+print(seqTimes)
+print "-" * 80
+print("NaiveTimes: ")
+print(naiveTimes)
+print "-" * 80
+print("OptiTimes: ")
+print(optiTimes)
 
 print "-" * 80
 print("Custom Print Speedup")
@@ -321,13 +340,13 @@ CustomPrintSpeedUp(naiveTimes,optiTimes)
 print "-" * 80
 print("Custom Histogram Equal")
 print("Size 2^10x2^10")
-CustomHistEqual(hgram10, output_gpu_small, opt_gpu_small)
+CustomHistEqual(hgram10, output_gpu_small.get(), opt_gpu_small.get())
 
 print("Size 2^13x2^13")
-CustomHistEqual(hgram13, output_gpu_med, opt_gpu_med)
+CustomHistEqual(hgram13, output_gpu_med.get(), opt_gpu_med.get())
 
 print("Size 2^15x2^15")
-CustomHistEqual(hgram15, output_gpu_large, opt_gpu_large)
+CustomHistEqual(hgram15, output_gpu_large.get(), opt_gpu_large.get())
 
 print "-" * 80
 

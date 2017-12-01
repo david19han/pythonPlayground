@@ -149,7 +149,7 @@ CustomPrintHistogram(list(hgram15[:18]))
 CustomPrintHistogram(list(hgram15[len15-18:len15+1]))
 
 
-
+print "-" * 80
 kernel_code_template = """
 #include <stdio.h>
 #include <math.h>
@@ -199,6 +199,7 @@ naiveHisto(
             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
             )
 naiveTimes.append(time.time()-start)
+CustomPrintHistogram(small_gpu.get()[:18])
 print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
 
 print("GPU for Medium Matrix:")
@@ -215,6 +216,8 @@ naiveHisto(
             )
 naiveTimes.append(time.time()-start)
 CustomPrintHistogram(med_gpu.get()[:18])
+CustomPrintHistogram(med_gpu.get()[len13-18:len13+1])
+
 print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
 
 print("GPU for Large Matrix:")
@@ -230,8 +233,11 @@ naiveHisto(
             grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
             )
 naiveTimes.append(time.time()-start)
+CustomPrintHistogram(large_gpu.get()[:18])
+CustomPrintHistogram(large_gpu.get()[len15-18:len15+1])
 print(np.array_equal(large_gpu.get(),hgram15.astype('int32')))
 
+print "-" * 80
 
 kernel_opt_template = """
 #include <stdio.h>
@@ -282,8 +288,8 @@ optoHisto = mod.get_function("optimizeHisto")
 
 optiTimes = []
 
-small_gpu_opt = gpuarray.zeros(smallBins, np.int32)
 print("Optimized GPU for Small Matrix:")
+small_gpu_opt = gpuarray.zeros(smallBins, np.int32)
 start = time.time()
 optoHisto(
             # inputs
@@ -295,6 +301,7 @@ optoHisto(
             )
 optiTimes.append(time.time()-start)
 print(np.array_equal(small_gpu_opt.get(),hgram10.astype('int32')))
+CustomPrintHistogram(small_gpu_opt.get()[:18])
 
 med_gpu_opt = gpuarray.zeros(medBins, np.int32)
 print("Optimized GPU for Medium Matrix:")
@@ -324,6 +331,9 @@ optoHisto(
             grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
             )
 optiTimes.append(time.time()-start)
+
+CustomPrintHistogram(large_gpu.get()[:18])
+CustomPrintHistogram(large_gpu.get()[len13-18:len13+1])
 print(np.array_equal(large_gpu_opt.get(),hgram15.astype('int32')))
 
 print "-" * 80
