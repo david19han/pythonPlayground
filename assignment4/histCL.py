@@ -260,7 +260,7 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
 
    //index into right 18 bin set 
 
-    if(get_local_id(0) < 19 && get_local_id(1)==0){
+    if(get_local_id(0) < 18 && get_local_id(1)==0){
 
         int rowRegion = row/1024;
         int colRegion = col/1024;

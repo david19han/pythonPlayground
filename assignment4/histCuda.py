@@ -269,7 +269,7 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
 
     //index into right 18 bin set 
 
-    if(threadIdx.x < 19 && threadIdx.y==0){
+    if(threadIdx.x < 18 && threadIdx.y==0){
 
         int rowRegion = row/1024;
         int colRegion = col/1024;
