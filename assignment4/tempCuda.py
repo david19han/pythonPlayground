@@ -321,28 +321,27 @@ optoHisto(
 optiTimes.append(time.time()-start)
 print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
 CustomPrintHistogram(med_gpu_opt.get()[:18])
-CustomPrintHistogram(med_gpu_opt.get()[36-18:37])
 CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
 
 
 
 print "-" * 80
 large_gpu_opt = gpuarray.zeros(largeBins, np.int32)
-# print("Optimized GPU for Large Matrix:")
-# start = time.time()
-# optoHisto(
-#             # inputs
-#             input_gpu_large, 
-#             large_gpu_opt,
-#             np.int32(largeMatrix),
-#             block = (blockSize,blockSize,1),
-#             grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
-#             )
-# optiTimes.append(time.time()-start)
+print("Optimized GPU for Large Matrix:")
+start = time.time()
+optoHisto(
+            # inputs
+            input_gpu_large, 
+            large_gpu_opt,
+            np.int32(largeMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
+            )
+optiTimes.append(time.time()-start)
 
-# CustomPrintHistogram(large_gpu.get()[:18])
-# CustomPrintHistogram(large_gpu.get()[len15-18:len15+1])
-# print(np.array_equal(large_gpu_opt.get(),hgram15.astype('int32')))
+CustomPrintHistogram(large_gpu.get()[:18])
+CustomPrintHistogram(large_gpu.get()[len15-18:len15+1])
+print(np.array_equal(large_gpu_opt.get(),hgram15.astype('int32')))
 
 print "-" * 80
 print("Custom Print Time")
