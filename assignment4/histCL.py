@@ -399,6 +399,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 #####################  
+plt.figure(0)
 plt.gcf() 
 plt.plot(arraysize_x, seqTimes, 'r')
 plt.xlabel('Array Size')
@@ -407,7 +408,8 @@ plt.gca().set_ylim((min(seqTimes),max(seqTimes)))
 plt.legend(handles=[])
 plt.savefig('SeqCL.png')
 
-#####################  
+##################### 
+plt.figure(1) 
 plt.gcf() 
 plt.plot(arraysize_x, naiveTimes, 'r')
 plt.xlabel('Array Size')
@@ -417,6 +419,7 @@ plt.gca().set_ylim((min(naiveTimes),max(naiveTimes)))
 plt.savefig('NaiveCL.png')
 
 ##################### 
+plt.figure(2)
 plt.gcf()  
 plt.plot(arraysize_x, optiTimes, 'r')
 plt.xlabel('Array Size')
@@ -426,6 +429,7 @@ plt.legend(handles=[])
 plt.savefig('OptimizedCL.png')
 
 # red dashes, blue squares and green triangles
+plt.figure(3)
 plt.gcf()  
 plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
 plt.xlabel('Array Size')
