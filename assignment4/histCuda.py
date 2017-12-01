@@ -333,7 +333,7 @@ optoHisto(
 optiTimes.append(time.time()-start)
 
 CustomPrintHistogram(large_gpu.get()[:18])
-CustomPrintHistogram(large_gpu.get()[len13-18:len13+1])
+CustomPrintHistogram(large_gpu.get()[len15-18:len15+1])
 print(np.array_equal(large_gpu_opt.get(),hgram15.astype('int32')))
 
 print "-" * 80

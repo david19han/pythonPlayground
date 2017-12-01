@@ -350,6 +350,11 @@ CustomHistEqual(hgram15, output_gpu_large.get(), opt_gpu_large.get())
 
 print "-" * 80
 
+#plot
+import matplotlib as mpl
+mpl.use('agg')
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 # red dashes, blue squares and green triangles
 plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
 plt.xlabel('Array Size')
