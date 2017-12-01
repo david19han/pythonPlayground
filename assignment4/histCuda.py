@@ -108,25 +108,46 @@ def histogram(data, exponent = 10):
     bins = bins.reshape(-1)
     return bins
 
+smallBins = 18
+medBins = 18*64
+largeBins = 18*1024
+
+smallMatrix = 1024
+medMatrix = np.power(2,13)
+largeMatrix = np.power(2,15)
+
+arraysize_x = []
+arraysize_x.append(smallMatrix)
+arraysize_x.append(medMatrix)
+arraysize_x.append(largeMatrix)
+
+seqTimes = []
+
 print("Sequential 2^10x2^10")
 data0 = getData('hist_data.dat',0)
+start = time.time()
 hgram10 = histogram(data0)
+seqTimes.append(time.time()-start)
 CustomPrintHistogram(list(hgram10))
 
-# print("Sequential 2^13x2^13")
-# data1 = getData('hist_data.dat',1)
-# hgram13 = histogram(data1)
-# CustomPrintHistogram(list(hgram13[:18]))
-# len13 = len(hgram13)
-# CustomPrintHistogram(list(hgram13[18:36]))
-# CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
+print("Sequential 2^13x2^13")
+data1 = getData('hist_data.dat',1)
+start = time.time()
+hgram13 = histogram(data1)
+seqTimes.append(time.time()-start)
+len13 = len(hgram13)
+CustomPrintHistogram(list(hgram13[:18]))
+CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
 
-# print("Sequential 2^15x2^15")
-# data2 = getData('hist_data.dat',2)
-# hgram15 = histogram(data2)
-# len15 = len(hgram15)
-# CustomPrintHistogram(list(hgram15[:18]))
-# CustomPrintHistogram(list(hgram15[len15-18:len15+1]))
+print("Sequential 2^15x2^15")
+data2 = getData('hist_data.dat',2)
+start = time.time()
+hgram15 = histogram(data2)
+seqTimes.append(time.time()-start)
+len15 = len(hgram15)
+CustomPrintHistogram(list(hgram15[:18]))
+CustomPrintHistogram(list(hgram15[len15-18:len15+1]))
+
 
 
 kernel_code_template = """
@@ -156,37 +177,19 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 }
 """
 
-# kernel_code_template = """
-# #include <stdio.h>
-# #include <math.h>
-
-# __global__ void naiveHisto(int *data,int* histogram,int size)
-# {
-#     printf("Value is %d",data[threadIdx.x]);
-#     int value = data[threadIdx.x];
-#     int bIndex = value/10;
-#     printf("bIndex is %d",bIndex);
-# }   
-# """
-
-smallBins = 18
-medBins = 18*64
-largeBins = 18*1024
-
-smallMatrix = 1024
-medMatrix = np.power(2,13)
-largeMatrix = np.power(2,15)
-
 # compile the kernel code
 mod = compiler.SourceModule(kernel_code_template)
 # get the kernel function from the compiled module
 naiveHisto = mod.get_function("naiveHisto")
 blockSize = 32
 
+naiveTimes = []
+
 small_gpu = gpuarray.zeros(smallBins, np.int32)
 input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
 
 print("GPU for Small Matrix:")
+start = time.time()
 naiveHisto(
             # inputs
             input_gpu_small, #1024x1024
@@ -195,35 +198,39 @@ naiveHisto(
             block = (blockSize,blockSize,1),
             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
             )
+naiveTimes.append(time.time()-start)
 print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
 
-# print("GPU for Medium Matrix:")
-# med_gpu = gpuarray.zeros(medBins,np.int32)
-# input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
-# naiveHisto(
-#             # inputs
-#             input_gpu_med, 
-#             med_gpu,
-#             np.int32(medMatrix),
-#             block = (blockSize,blockSize,1),
-#             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
-#             )
-# CustomPrintHistogram(list(hgram13[:18]))
-# CustomPrintHistogram(med_gpu.get()[:18])
-# print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
+print("GPU for Medium Matrix:")
+med_gpu = gpuarray.zeros(medBins,np.int32)
+input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
+start = time.time()
+naiveHisto(
+            # inputs
+            input_gpu_med, 
+            med_gpu,
+            np.int32(medMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (medMatrix/blockSize,medMatrix/blockSize,1)
+            )
+naiveTimes.append(time.time()-start)
+CustomPrintHistogram(med_gpu.get()[:18])
+print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
 
-# print("GPU for Large Matrix:")
-# large_gpu = gpuarray.zeros(largeBins,np.int32)
-# input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
-# naiveHisto(
-#             # inputs
-#             input_gpu_large, #1024x1024
-#             large_gpu,
-#             np.int32(largeMatrix),
-#             block = (blockSize,blockSize,1),
-#             grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
-#             )
-# print(np.array_equal(large_gpu.get(),hgram15.astype('int32')))
+print("GPU for Large Matrix:")
+large_gpu = gpuarray.zeros(largeBins,np.int32)
+input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
+start = time.time()
+naiveHisto(
+            # inputs
+            input_gpu_large, #1024x1024
+            large_gpu,
+            np.int32(largeMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
+            )
+naiveTimes.append(time.time()-start)
+print(np.array_equal(large_gpu.get(),hgram15.astype('int32')))
 
 
 kernel_opt_template = """
@@ -273,44 +280,118 @@ mod = compiler.SourceModule(kernel_opt_template)
 # get the kernel function from the compiled module
 optoHisto = mod.get_function("optimizeHisto")
 
-# small_gpu_opt = gpuarray.zeros(smallBins, np.int32)
-# print("Optimized GPU for Small Matrix:")
-# optoHisto(
-#             # inputs
-#             input_gpu_small, 
-#             small_gpu_opt,
-#             np.int32(smallMatrix),
-#             block = (blockSize,blockSize,1),
-#             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
-#             )
-# print(np.array_equal(small_gpu_opt.get(),hgram10.astype('int32')))
+optiTimes = []
 
-# med_gpu_opt = gpuarray.zeros(medBins, np.int32)
-# print("Optimized GPU for Medium Matrix:")
-# optoHisto(
-#             # inputs
-#             input_gpu_med, 
-#             med_gpu_opt,
-#             np.int32(medMatrix),
-#             block = (blockSize,blockSize,1),
-#             grid = (medMatrix/blockSize,medMatrix/blockSize,1)
-#             )
-# print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
-# CustomPrintHistogram(med_gpu_opt.get()[:18])
-# print("optGPU")
-# CustomPrintHistogram(med_gpu_opt.get()[18:36])
-# CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
+small_gpu_opt = gpuarray.zeros(smallBins, np.int32)
+print("Optimized GPU for Small Matrix:")
+start = time.time()
+optoHisto(
+            # inputs
+            input_gpu_small, 
+            small_gpu_opt,
+            np.int32(smallMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
+            )
+optiTimes.append(time.time()-start)
+print(np.array_equal(small_gpu_opt.get(),hgram10.astype('int32')))
 
-# large_gpu_opt = gpuarray.zeros(largeBins, np.int32)
-# print("Optimized GPU for Large Matrix:")
-# optoHisto(
-#             # inputs
-#             input_gpu_large, 
-#             large_gpu_opt,
-#             np.int32(largeMatrix),
-#             block = (blockSize,blockSize,1),
-#             grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
-#             )
-# print(np.array_equal(large_gpu_opt.get(),hgram15.astype('int32')))
+med_gpu_opt = gpuarray.zeros(medBins, np.int32)
+print("Optimized GPU for Medium Matrix:")
+start = time.time()
+optoHisto(
+            # inputs
+            input_gpu_med, 
+            med_gpu_opt,
+            np.int32(medMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (medMatrix/blockSize,medMatrix/blockSize,1)
+            )
+optiTimes.append(time.time()-start)
+print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
+CustomPrintHistogram(med_gpu_opt.get()[:18])
+CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
+
+large_gpu_opt = gpuarray.zeros(largeBins, np.int32)
+print("Optimized GPU for Large Matrix:")
+start = time.time()
+optoHisto(
+            # inputs
+            input_gpu_large, 
+            large_gpu_opt,
+            np.int32(largeMatrix),
+            block = (blockSize,blockSize,1),
+            grid = (largeMatrix/blockSize,largeMatrix/blockSize,1)
+            )
+optiTimes.append(time.time()-start)
+print(np.array_equal(large_gpu_opt.get(),hgram15.astype('int32')))
+
+print "-" * 80
+print("Custom Print Time")
+CustomPrintTime(seqTimes,naiveTimes,optiTimes)
+
+print "-" * 80
+print("Custom Print Speedup")
+CustomPrintSpeedUp(naiveTimes,optiTimes)
+
+print "-" * 80
+print("Custom Histogram Equal")
+print("Size 2^10x2^10")
+CustomHistEqual(hgram10, small_gpu, small_gpu_opt)
+
+print("Size 2^13x2^13")
+CustomHistEqual(hgram13, med_gpu, med_gpu_opt)
+
+print("Size 2^15x2^15")
+CustomHistEqual(hgram15, large_gpu, large_gpu_opt)
+
+print "-" * 80
+
+#plot
+import matplotlib as mpl
+mpl.use('agg')
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+
+# red dashes, blue squares and green triangles
+plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
+plt.xlabel('Array Size')
+plt.ylabel('Time')
+
+red_patch = mpatches.Patch(color='red', label='Sequential')
+blue_patch = mpatches.Patch(color='blue', label='Naive')
+green_patch = mpatches.Patch(color='green', label='Optimized')
+
+handles = []
+handles.append(red_patch)
+handles.append(blue_patch)
+handles.append(green_patch)
+plt.legend(handles=handles)
+plt.savefig('CUDA.png')
+
+
+# plt.gcf()
+# plt.plot(arraysize_x,seqTimes)
+# plt.xlabel('Array Size')
+# plt.ylabel('Time')
+# plt.gca().set_xlim((min(x),max(x)))
+# plt.savefig('seqTimesCUDA.png')
+
+# plt.gcf()
+# plt.plot(arraysize_x,naiveTimes)
+# plt.xlabel('Array Size')
+# plt.ylabel('Time')
+# plt.gca().set_xlim((min(x),max(x)))
+# plt.savefig('seqTimesCUDA.png')
+
+# plt.gcf()
+# plt.plot(arraysize_x,optiTimes)
+# plt.xlabel('Array Size')
+# plt.ylabel('Time')
+# plt.gca().set_xlim((min(x),max(x)))
+# plt.savefig('seqTimesCUDA.png')
+
+
 
 
