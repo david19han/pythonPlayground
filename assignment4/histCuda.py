@@ -368,7 +368,8 @@ import matplotlib.patches as mpatches
 
 # red dashes, blue squares and green triangles
 
-#####################  
+#####################
+plt.figure(0)  
 plt.gcf() 
 plt.plot(arraysize_x, seqTimes, 'r')
 plt.xlabel('Array Size')
@@ -378,6 +379,7 @@ plt.legend(handles=[])
 plt.savefig('SeqCUDA.png')
 
 #####################  
+plt.figure(1)
 plt.gcf() 
 plt.plot(arraysize_x, naiveTimes, 'r')
 plt.xlabel('Array Size')
@@ -387,6 +389,7 @@ plt.gca().set_ylim((min(naiveTimes),max(naiveTimes)))
 plt.savefig('NaiveCUDA.png')
 
 ##################### 
+plt.figure(2)
 plt.gcf()  
 plt.plot(arraysize_x, optiTimes, 'r')
 plt.xlabel('Array Size')
@@ -395,6 +398,7 @@ plt.gca().set_ylim((min(optiTimes),max(optiTimes)))
 plt.legend(handles=[])
 plt.savefig('OptimizedCUDA.png')
 
+plt.figure(3)
 plt.gcf()  
 plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
 plt.xlabel('Array Size')
