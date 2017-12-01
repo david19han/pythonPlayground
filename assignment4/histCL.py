@@ -236,10 +236,51 @@ print(np.array_equal(output_gpu_large.get(),hgram15.astype('int32')))
 
 print "-" * 80
 
+# optKernel = """
+# __kernel void func(__global int* data, __global int* histogram, int size) {
+#     int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
+#     int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
+
+#     __local int localHisto[18];
+
+#     for(int i = 0;i<18;i++){
+#         localHisto[i] = 0;
+#     }
+
+#     barrier(CLK_LOCAL_MEM_FENCE);
+
+#     if(col<size && row<size){
+#         int index = col + row * size;
+#         int value = data[index];
+#         int bIndex = value/10;
+#         atomic_add(&localHisto[bIndex],1);
+#     }
+
+#     barrier(CLK_LOCAL_MEM_FENCE);
+
+#    //index into right 18 bin set 
+
+#     if(get_local_id(0) < 18 && get_local_id(1)==0){
+
+#         int rowRegion = row/1024;
+#         int colRegion = col/1024;
+
+#         int numBox = size/1024;
+#         int binRegion = colRegion + rowRegion * numBox;
+#         int gIndex = get_local_id(0) + binRegion*18;
+
+#         atomic_add(&histogram[gIndex],localHisto[get_local_id(0)]);
+#     }
+# }
+# """
+
 optKernel = """
 __kernel void func(__global int* data, __global int* histogram, int size) {
-    int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
-    int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
+    int col = get_global_id(0);
+    int row = get_global_id(1);
+
+    int x = get_local_id(0);
+    int y = get_local_id(1);
 
     __local int localHisto[18];
 
@@ -260,16 +301,16 @@ __kernel void func(__global int* data, __global int* histogram, int size) {
 
    //index into right 18 bin set 
 
-    if(get_local_id(0) < 18 && get_local_id(1)==0){
+    if(x < 18 && y==0){
 
         int rowRegion = row/1024;
         int colRegion = col/1024;
 
         int numBox = size/1024;
         int binRegion = colRegion + rowRegion * numBox;
-        int gIndex = get_local_id(0) + binRegion*18;
+        int gIndex = x + binRegion*18;
 
-        atomic_add(&histogram[gIndex],localHisto[get_local_id(0)]);
+        atomic_add(&histogram[gIndex],localHisto[x]);
     }
 }
 """
