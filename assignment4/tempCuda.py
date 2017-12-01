@@ -183,7 +183,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 # mod = compiler.SourceModule(kernel_code_template)
 # # get the kernel function from the compiled module
 # naiveHisto = mod.get_function("naiveHisto")
-# blockSize = 32
+blockSize = 32
 
 # naiveTimes = []
 
@@ -281,22 +281,6 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
     }
 }
 """
-
-if(col < size && row < size){
-        int index = col + row * size;
-        int value = data[index];
-        int bIndex = value/10;
-
-        int rowRegion = row/1024;
-        int colRegion = col/1024;
-
-        int numBox = size/1024;
-
-        int binRegion = colRegion + rowRegion * numBox;
-        bIndex += binRegion*18;
-
-        atomicAdd(&histogram[bIndex],1);
-    }    
 
 # compile the kernel code
 mod = compiler.SourceModule(kernel_opt_template)
