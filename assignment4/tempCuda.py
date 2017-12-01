@@ -268,7 +268,7 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
 
     //index into right 18 bin set 
 
-    if(threadIdx.x < 19 && threadIdx.y==0){
+    if(threadIdx.x < 18 && threadIdx.y==0){
 
         int rowRegion = row/1024;
         int colRegion = col/1024;
@@ -281,6 +281,22 @@ __global__ void optimizeHisto(int *data,int* globalHisto,int size)
     }
 }
 """
+
+if(col < size && row < size){
+        int index = col + row * size;
+        int value = data[index];
+        int bIndex = value/10;
+
+        int rowRegion = row/1024;
+        int colRegion = col/1024;
+
+        int numBox = size/1024;
+
+        int binRegion = colRegion + rowRegion * numBox;
+        bIndex += binRegion*18;
+
+        atomicAdd(&histogram[bIndex],1);
+    }    
 
 # compile the kernel code
 mod = compiler.SourceModule(kernel_opt_template)
