@@ -353,10 +353,10 @@ input_gpu_large = cl.array.to_device(queue,data2.astype('int32'))
 output_gpu_zeros_large = np.zeros(largeBins,'int32') 
 opt_gpu_large = cl.array.to_device(queue,output_gpu_zeros_large.astype('int32'))
 
-start=time.time()
 prg = cl.Program(ctx, optKernel).build()
-optiTimes.append(time.time()-start)
+start=time.time()
 prg.func(queue,(largeMatrix,largeMatrix),(32,32),input_gpu_large.data,opt_gpu_large.data,np.int32(largeMatrix))
+optiTimes.append(time.time()-start)
 
 CustomPrintHistogram(opt_gpu_large.get()[:18])
 CustomPrintHistogram(opt_gpu_large.get()[len15-18:len15+1])
