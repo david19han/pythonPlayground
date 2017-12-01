@@ -118,26 +118,35 @@ for platform in platforms:
 ctx = cl.Context(devs)
 queue = cl.CommandQueue(ctx, properties=cl.command_queue_properties.PROFILING_ENABLE)
 
-# Define the OpenCL kernel you wish to run; most of the interesting stuff you
-# will be doing involves modifying or writing kernels:
+#naive kernel
 naiveKernel = """
 __kernel void func(__global int* data, __global int* histogram, int size) {
+    //get the column and row for indexing
     int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
     int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
 
     if(col<size && row < size){
+        //calculate the index
         int index = col + row * size;
+
+        //get the value from data
         int value = data[index];
 
+        //divide by 10 to find the right bin number
         int bIndex = value/10;
 
+        //histogram is the output array containing several 1D 1x18 histogram vectors
+        //find which vector to increment by indexing 2D data into boxes of 1024x1024
         int rowRegion = row/1024;
         int colRegion = col/1024;
 
         int numBox = size/1024;
 
+        //calculate bin region and add it to bin Index
         int binRegion = colRegion + rowRegion * numBox;
         bIndex += binRegion*18;
+
+        //atomic add
         atomic_add(&histogram[bIndex],1);
     }
 }
@@ -147,20 +156,25 @@ smallBins = 18
 medBins = 18*64
 largeBins = 18*1024
 
+#row/column length of input matrices
 smallMatrix = 1024
 medMatrix = np.power(2,13)
 largeMatrix = np.power(2,15)
 
+#array sizes
 arraysize_x = []
 arraysize_x.append(smallMatrix)
 arraysize_x.append(medMatrix)
 arraysize_x.append(largeMatrix)
 
+#sequence times
 seqTimes = []
 
 
 print("Sequential 2^10x2^10")
 data0 = getData('hist_data.dat',0)
+
+#timer
 start = time.time()
 hgram10 = histogram(data0)
 seqTimes.append(time.time()-start)
@@ -170,6 +184,7 @@ print "-" * 80
 
 print("Sequential 2^13x2^13")
 data1 = getData('hist_data.dat',1)
+#timer
 start = time.time()
 hgram13 = histogram(data1)
 seqTimes.append(time.time()-start)
@@ -181,6 +196,7 @@ print "-" * 80
 
 print("Sequential 2^15x2^15")
 data2 = getData('hist_data.dat',2)
+#timer
 start = time.time()
 hgram15 = histogram(data2)
 seqTimes.append(time.time()-start)
@@ -193,123 +209,121 @@ print "-" * 80
 naiveTimes = [] 
 
 print("Naive GPU for Small Matrix:")
+
+#move input matrix to gpu
 input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
+#allocate a zeros array for the output histogram
 output_gpu_zeros_small = np.zeros(smallBins,'int32') 
+#move zeros array to gpu
 output_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
 
+#build kernel code
 prg = cl.Program(ctx, naiveKernel).build()
+
+#timer
 start = time.time() 
+#run kernel with block size of 32x32
 prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
 naiveTimes.append(time.time()-start)
 CustomPrintHistogram(output_gpu_small.get()[:18])
+#compare output with sequential 
 print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 
 print "-" * 80
 
 print("Naive GPU for Medium Matrix:")
+#move input matrix to gpu
 input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
+#allocate a zeros array for the output histogram
 output_gpu_zeros_med = np.zeros(medBins,'int32') 
+#move zeros array to gpu
 output_gpu_med = cl.array.to_device(queue,output_gpu_zeros_med.astype('int32'))
 
+#build kernel code
 prg = cl.Program(ctx, naiveKernel).build()
+
+#timer
 start = time.time()
+#run kernel with block size of 32x32
 prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
 naiveTimes.append(time.time()-start)
+#print output, first and last 18 bins
 CustomPrintHistogram(output_gpu_med.get()[:18])
 CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
+#compare output with sequential 
 print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
 
 print "-" * 80
 
 print("Naive GPU for Large Matrix:")
+#move input matrix to gpu
 input_gpu_large = cl.array.to_device(queue,data2.astype('int32'))
+#allocate a zeros array for the output histogram
 output_gpu_zeros_large = np.zeros(largeBins,'int32') 
+#move zeros array to gpu
 output_gpu_large = cl.array.to_device(queue,output_gpu_zeros_large.astype('int32'))
 
+#build kernel code
 prg = cl.Program(ctx, naiveKernel).build()
+#timer
 start = time.time()
+#run kernel with block size of 32x32
 prg.func(queue,(largeMatrix,largeMatrix),(32,32),input_gpu_large.data,output_gpu_large.data,np.int32(largeMatrix))
 naiveTimes.append(time.time()-start)
+#print output, first and last 18 bins
 CustomPrintHistogram(output_gpu_large.get()[:18])
 CustomPrintHistogram(output_gpu_large.get()[len15-18:len15+1])
+#compare output with sequential 
 print(np.array_equal(output_gpu_large.get(),hgram15.astype('int32')))
 
 print "-" * 80
 
-# optKernel = """
-# __kernel void func(__global int* data, __global int* histogram, int size) {
-#     int col = get_group_id(0) * get_local_size(0) + get_local_id(0);
-#     int row = get_group_id(1) * get_local_size(1) + get_local_id(1);
-
-#     __local int localHisto[18];
-
-#     for(int i = 0;i<18;i++){
-#         localHisto[i] = 0;
-#     }
-
-#     barrier(CLK_LOCAL_MEM_FENCE);
-
-#     if(col<size && row<size){
-#         int index = col + row * size;
-#         int value = data[index];
-#         int bIndex = value/10;
-#         atomic_add(&localHisto[bIndex],1);
-#     }
-
-#     barrier(CLK_LOCAL_MEM_FENCE);
-
-#    //index into right 18 bin set 
-
-#     if(get_local_id(0) < 18 && get_local_id(1)==0){
-
-#         int rowRegion = row/1024;
-#         int colRegion = col/1024;
-
-#         int numBox = size/1024;
-#         int binRegion = colRegion + rowRegion * numBox;
-#         int gIndex = get_local_id(0) + binRegion*18;
-
-#         atomic_add(&histogram[gIndex],localHisto[get_local_id(0)]);
-#     }
-# }
-# """
-
 optKernel = """
 __kernel void func(__global int* data, __global int* histogram, int size) {
+    //get column and row
     int col = get_global_id(0);
     int row = get_global_id(1);
 
+    //get work item id in block
     int x = get_local_id(0);
     int y = get_local_id(1);
 
+    //create new histogram in local memory
     __local int localHisto[18];
 
+    //instantiate all bins with 0
     for(int i = 0;i<18;i++){
         localHisto[i] = 0;
     }
 
+    //wait for all work items to finish instantiating
     barrier(CLK_LOCAL_MEM_FENCE);
 
     if(col<size && row<size){
+        //calculate index for input data
         int index = col + row * size;
         int value = data[index];
+
+        //find right bin number
         int bIndex = value/10;
+
         atomic_add(&localHisto[bIndex],1);
     }
 
+    //wait for all work items to finish incrementing local histogram
     barrier(CLK_LOCAL_MEM_FENCE);
 
-   //index into right 18 bin set 
-
+   //index into right 18 bin set in output histogram.
+   //only allow first 18 threads of each block to participate
     if(x < 18 && y==0){
-
+        //find right row/column box if 2D data was divided into 1024x1024 boxes
         int rowRegion = row/1024;
         int colRegion = col/1024;
 
         int numBox = size/1024;
         int binRegion = colRegion + rowRegion * numBox;
         int gIndex = x + binRegion*18;
-
+        //add to correct 1x18 vector in output histogram
         atomic_add(&histogram[gIndex],localHisto[x]);
     }
 }
@@ -365,15 +379,6 @@ print(np.array_equal(opt_gpu_large.get(),hgram15.astype('int32')))
 print "-" * 80
 print("Custom Print Time")
 CustomPrintTime(seqTimes,naiveTimes,optiTimes)
-print "-" * 80
-print("SeqTimes: ")
-print(seqTimes)
-print "-" * 80
-print("NaiveTimes: ")
-print(naiveTimes)
-print "-" * 80
-print("OptiTimes: ")
-print(optiTimes)
 
 print "-" * 80
 print("Custom Print Speedup")
@@ -445,32 +450,5 @@ handles.append(blue_patch)
 handles.append(green_patch)
 plt.legend(handles=handles)
 plt.savefig('CUDA.png')
-
-
-# plt.gcf()
-# plt.plot(arraysize_x,seqTimes)
-# plt.xlabel('Array Size')
-# plt.ylabel('Time')
-# plt.gca().set_xlim((min(x),max(x)))
-# plt.savefig('seqTimesCUDA.png')
-
-# plt.gcf()
-# plt.plot(arraysize_x,naiveTimes)
-# plt.xlabel('Array Size')
-# plt.ylabel('Time')
-# plt.gca().set_xlim((min(x),max(x)))
-# plt.savefig('seqTimesCUDA.png')
-
-# plt.gcf()
-# plt.plot(arraysize_x,optiTimes)
-# plt.xlabel('Array Size')
-# plt.ylabel('Time')
-# plt.gca().set_xlim((min(x),max(x)))
-# plt.savefig('seqTimesCUDA.png')
-
-
-
-
-
 
 

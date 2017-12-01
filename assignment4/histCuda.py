@@ -110,10 +110,12 @@ def histogram(data, exponent = 10):
     bins = bins.reshape(-1)
     return bins
 
+#possible number of bins
 smallBins = 18
 medBins = 18*64
 largeBins = 18*1024
 
+#matrix sizes
 smallMatrix = 1024
 medMatrix = np.power(2,13)
 largeMatrix = np.power(2,15)
@@ -123,6 +125,7 @@ arraysize_x.append(smallMatrix)
 arraysize_x.append(medMatrix)
 arraysize_x.append(largeMatrix)
 
+#sequence Times
 seqTimes = []
 
 print("Sequential 2^10x2^10")
@@ -158,22 +161,32 @@ kernel_code_template = """
 
 __global__ void naiveHisto(int *data,int* histogram,int size)
 {
+    //get the right row and column
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
 
     if(col < size && row < size){
+        //calculate the index
         int index = col + row * size;
+
+        //get value
         int value = data[index];
+
+        //find the right bin from 0 to 17
         int bIndex = value/10;
 
+        //find which 1D 1x18 vector within the global histogram to update
         int rowRegion = row/1024;
         int colRegion = col/1024;
 
         int numBox = size/1024;
 
         int binRegion = colRegion + rowRegion * numBox;
+
+        //add to the bin index
         bIndex += binRegion*18;
 
+        //atomic add to global histogram
         atomicAdd(&histogram[bIndex],1);
     }    
 }
@@ -187,10 +200,14 @@ blockSize = 32
 
 naiveTimes = []
 
+#output array
 small_gpu = gpuarray.zeros(smallBins, np.int32)
+#copy to gpu
 input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
 
 print("GPU for Small Matrix:")
+
+#run naive kernel
 start = time.time()
 naiveHisto(
             # inputs
@@ -202,10 +219,14 @@ naiveHisto(
             )
 naiveTimes.append(time.time()-start)
 CustomPrintHistogram(small_gpu.get()[:18])
+#check for equality
 print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
 print "-" * 80
+
 print("GPU for Medium Matrix:")
+#output array
 med_gpu = gpuarray.zeros(medBins,np.int32)
+#copy to gpu
 input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 start = time.time()
 naiveHisto(
@@ -219,12 +240,16 @@ naiveHisto(
 naiveTimes.append(time.time()-start)
 CustomPrintHistogram(med_gpu.get()[:18])
 CustomPrintHistogram(med_gpu.get()[len13-18:len13+1])
-
+#check for equality
 print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
 print "-" * 80
+
 print("GPU for Large Matrix:")
+#output array
 large_gpu = gpuarray.zeros(largeBins,np.int32)
+#copy input data to gpu
 input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
+#run kernel
 start = time.time()
 naiveHisto(
             # inputs
@@ -237,6 +262,7 @@ naiveHisto(
 naiveTimes.append(time.time()-start)
 CustomPrintHistogram(large_gpu.get()[:18])
 CustomPrintHistogram(large_gpu.get()[len15-18:len15+1])
+#check for equality
 print(np.array_equal(large_gpu.get(),hgram15.astype('int32')))
 
 print "-" * 80
@@ -247,35 +273,51 @@ kernel_opt_template = """
 
 __global__ void optimizeHisto(int *data,int* globalHisto,int size)
 {
+    //find which column and row
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
 
-
+    //allocate local histogram to shared memory
     __shared__ unsigned int localHisto[18];
 
+    //initialize to 0
     for(int i = 0;i<18;i++){
         localHisto[i] = 0;
     }
+
+    //wait for all threads to initialize to 0
     __syncthreads();
 
     if(col<size && row<size){
+        //calculate index to input array
         int index = col + row * size;
+
+        //get value from global input array
         int value = data[index];
+
+        //find the right bin within 0 to 17
         int bIndex = value/10;
+
+        //atomic add to shared histogram
         atomicAdd(&localHisto[bIndex],1);
     }
+
+    //wait for all threads to finish updating shared histogram
     __syncthreads();
 
 
-    //index into right 18 bin set 
-
+    //index into right 18 bin set
+    //only allow first 18 threads of each block to continue
     if(threadIdx.x < 18 && threadIdx.y==0){
 
+        //find which box index is in if 2D input array is divided into 1024x1024 boxes
         int rowRegion = row/1024;
         int colRegion = col/1024;
 
         int numBox = size/1024;
         int binRegion = colRegion + rowRegion * numBox;
+
+        //exact index/bin on global histogram to update
         int gIndex = threadIdx.x + binRegion*18;
 
         atomicAdd(&globalHisto[gIndex],localHisto[threadIdx.x]);
