@@ -130,7 +130,7 @@ data0 = getData('hist_data.dat',0)
 start = time.time()
 hgram10 = histogram(data0)
 seqTimes.append(time.time()-start)
-CustomPrintHistogram(list(hgram10))
+# CustomPrintHistogram(list(hgram10))
 print "-" * 80
 print("Sequential 2^13x2^13")
 data1 = getData('hist_data.dat',1)
@@ -140,8 +140,8 @@ seqTimes.append(time.time()-start)
 # len13 = len(hgram13)
 # CustomPrintHistogram(list(hgram13[:18]))
 # CustomPrintHistogram(list(hgram13[len13-18:len13+1]))
-print "-" * 80
-print("Sequential 2^15x2^15")
+# print "-" * 80
+# print("Sequential 2^15x2^15")
 data2 = getData('hist_data.dat',2)
 start = time.time()
 # hgram15 = histogram(data2)
@@ -151,7 +151,7 @@ seqTimes.append(time.time()-start)
 # CustomPrintHistogram(list(hgram15[len15-18:len15+1]))
 
 
-print "-" * 80
+# print "-" * 80
 kernel_code_template = """
 #include <stdio.h>
 #include <math.h>
@@ -190,7 +190,7 @@ naiveTimes = []
 small_gpu = gpuarray.zeros(smallBins, np.int32)
 input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
 
-print("GPU for Small Matrix:")
+# print("GPU for Small Matrix:")
 start = time.time()
 naiveHisto(
             # inputs
@@ -201,10 +201,10 @@ naiveHisto(
             grid = (smallMatrix/blockSize,smallMatrix/blockSize,1)
             )
 naiveTimes.append(time.time()-start)
-CustomPrintHistogram(small_gpu.get()[:18])
+# CustomPrintHistogram(small_gpu.get()[:18])
 # print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
-print "-" * 80
-print("GPU for Medium Matrix:")
+# print "-" * 80
+# print("GPU for Medium Matrix:")
 med_gpu = gpuarray.zeros(medBins,np.int32)
 input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 start = time.time()
@@ -221,8 +221,8 @@ naiveTimes.append(time.time()-start)
 # CustomPrintHistogram(med_gpu.get()[len13-18:len13+1])
 
 # print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
-print "-" * 80
-print("GPU for Large Matrix:")
+# print "-" * 80
+# print("GPU for Large Matrix:")
 large_gpu = gpuarray.zeros(largeBins,np.int32)
 input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
 start = time.time()
@@ -239,7 +239,7 @@ naiveTimes.append(time.time()-start)
 # CustomPrintHistogram(large_gpu.get()[len15-18:len15+1])
 # print(np.array_equal(large_gpu.get(),hgram15.astype('int32')))
 
-print "-" * 80
+# print "-" * 80
 
 kernel_opt_template = """
 #include <stdio.h>
@@ -290,7 +290,7 @@ optoHisto = mod.get_function("optimizeHisto")
 
 optiTimes = []
 
-print("Optimized GPU for Small Matrix:")
+# print("Optimized GPU for Small Matrix:")
 small_gpu_opt = gpuarray.zeros(smallBins, np.int32)
 start = time.time()
 optoHisto(
@@ -303,10 +303,10 @@ optoHisto(
             )
 optiTimes.append(time.time()-start)
 # print(np.array_equal(small_gpu_opt.get(),hgram10.astype('int32')))
-CustomPrintHistogram(small_gpu_opt.get()[:18])
-print "-" * 80
+# CustomPrintHistogram(small_gpu_opt.get()[:18])
+# print "-" * 80
 med_gpu_opt = gpuarray.zeros(medBins, np.int32)
-print("Optimized GPU for Medium Matrix:")
+# print("Optimized GPU for Medium Matrix:")
 start = time.time()
 optoHisto(
             # inputs
@@ -320,9 +320,9 @@ optiTimes.append(time.time()-start)
 # print(np.array_equal(med_gpu_opt.get(),hgram13.astype('int32')))
 # CustomPrintHistogram(med_gpu_opt.get()[:18])
 # CustomPrintHistogram(med_gpu_opt.get()[len13-18:len13+1])
-print "-" * 80
+# print "-" * 80
 large_gpu_opt = gpuarray.zeros(largeBins, np.int32)
-print("Optimized GPU for Large Matrix:")
+# print("Optimized GPU for Large Matrix:")
 start = time.time()
 optoHisto(
             # inputs
