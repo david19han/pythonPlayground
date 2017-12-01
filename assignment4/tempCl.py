@@ -192,49 +192,49 @@ print "-" * 80
 
 naiveTimes = [] 
 
-print("Naive GPU for Small Matrix:")
-input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
-output_gpu_zeros_small = np.zeros(smallBins,'int32') 
-output_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
+# print("Naive GPU for Small Matrix:")
+# input_gpu_small = cl.array.to_device(queue,data0.astype('int32'))
+# output_gpu_zeros_small = np.zeros(smallBins,'int32') 
+# output_gpu_small = cl.array.to_device(queue,output_gpu_zeros_small.astype('int32'))
 
-prg = cl.Program(ctx, naiveKernel).build()
-start = time.time() 
-prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
-naiveTimes.append(time.time()-start)
-CustomPrintHistogram(output_gpu_small.get()[:18])
-print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
+# prg = cl.Program(ctx, naiveKernel).build()
+# start = time.time() 
+# prg.func(queue,(smallMatrix,smallMatrix),(32,32),input_gpu_small.data,output_gpu_small.data,np.int32(smallMatrix))
+# naiveTimes.append(time.time()-start)
+# CustomPrintHistogram(output_gpu_small.get()[:18])
+# print(np.array_equal(output_gpu_small.get(),hgram10.astype('int32')))
 
-print "-" * 80
+# print "-" * 80
 
-print("Naive GPU for Medium Matrix:")
-input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
-output_gpu_zeros_med = np.zeros(medBins,'int32') 
-output_gpu_med = cl.array.to_device(queue,output_gpu_zeros_med.astype('int32'))
+# print("Naive GPU for Medium Matrix:")
+# input_gpu_med = cl.array.to_device(queue,data1.astype('int32'))
+# output_gpu_zeros_med = np.zeros(medBins,'int32') 
+# output_gpu_med = cl.array.to_device(queue,output_gpu_zeros_med.astype('int32'))
 
-prg = cl.Program(ctx, naiveKernel).build()
-start = time.time()
-prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
-naiveTimes.append(time.time()-start)
-CustomPrintHistogram(output_gpu_med.get()[:18])
-CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
-print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
+# prg = cl.Program(ctx, naiveKernel).build()
+# start = time.time()
+# prg.func(queue,(medMatrix,medMatrix),(32,32),input_gpu_med.data,output_gpu_med.data,np.int32(medMatrix))
+# naiveTimes.append(time.time()-start)
+# CustomPrintHistogram(output_gpu_med.get()[:18])
+# CustomPrintHistogram(output_gpu_med.get()[len13-18:len13+1])
+# print(np.array_equal(output_gpu_med.get(),hgram13.astype('int32')))
 
-print "-" * 80
+# print "-" * 80
 
-print("Naive GPU for Large Matrix:")
-input_gpu_large = cl.array.to_device(queue,data2.astype('int32'))
-output_gpu_zeros_large = np.zeros(largeBins,'int32') 
-output_gpu_large = cl.array.to_device(queue,output_gpu_zeros_large.astype('int32'))
+# print("Naive GPU for Large Matrix:")
+# input_gpu_large = cl.array.to_device(queue,data2.astype('int32'))
+# output_gpu_zeros_large = np.zeros(largeBins,'int32') 
+# output_gpu_large = cl.array.to_device(queue,output_gpu_zeros_large.astype('int32'))
 
-prg = cl.Program(ctx, naiveKernel).build()
-start = time.time()
-prg.func(queue,(largeMatrix,largeMatrix),(32,32),input_gpu_large.data,output_gpu_large.data,np.int32(largeMatrix))
-naiveTimes.append(time.time()-start)
-CustomPrintHistogram(output_gpu_large.get()[:18])
-CustomPrintHistogram(output_gpu_large.get()[len15-18:len15+1])
-print(np.array_equal(output_gpu_large.get(),hgram15.astype('int32')))
+# prg = cl.Program(ctx, naiveKernel).build()
+# start = time.time()
+# prg.func(queue,(largeMatrix,largeMatrix),(32,32),input_gpu_large.data,output_gpu_large.data,np.int32(largeMatrix))
+# naiveTimes.append(time.time()-start)
+# CustomPrintHistogram(output_gpu_large.get()[:18])
+# CustomPrintHistogram(output_gpu_large.get()[len15-18:len15+1])
+# print(np.array_equal(output_gpu_large.get(),hgram15.astype('int32')))
 
-print "-" * 80
+# print "-" * 80
 
 optKernel = """
 __kernel void func(__global int* data, __global int* histogram, int size) {
@@ -350,26 +350,26 @@ CustomHistEqual(hgram15, output_gpu_large.get(), opt_gpu_large.get())
 
 print "-" * 80
 
-#plot
-import matplotlib as mpl
-mpl.use('agg')
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-# red dashes, blue squares and green triangles
-plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
-plt.xlabel('Array Size')
-plt.ylabel('Time')
+# #plot
+# import matplotlib as mpl
+# mpl.use('agg')
+# import matplotlib.pyplot as plt
+# import matplotlib.patches as mpatches
+# # red dashes, blue squares and green triangles
+# plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
+# plt.xlabel('Array Size')
+# plt.ylabel('Time')
 
-red_patch = mpatches.Patch(color='red', label='Sequential')
-blue_patch = mpatches.Patch(color='blue', label='Naive')
-green_patch = mpatches.Patch(color='green', label='Optimized')
+# red_patch = mpatches.Patch(color='red', label='Sequential')
+# blue_patch = mpatches.Patch(color='blue', label='Naive')
+# green_patch = mpatches.Patch(color='green', label='Optimized')
 
-handles = []
-handles.append(red_patch)
-handles.append(blue_patch)
-handles.append(green_patch)
-plt.legend(handles=handles)
-plt.savefig('OpenCL.png')
+# handles = []
+# handles.append(red_patch)
+# handles.append(blue_patch)
+# handles.append(green_patch)
+# plt.legend(handles=handles)
+# plt.savefig('OpenCL.png')
 
 
 # plt.gcf()

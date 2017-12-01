@@ -6,7 +6,7 @@ import time
 import pyopencl as cl
 import pyopencl.array
 
-
+print("OPENCL")
  
 def CustomPrintTime(py_time, naive_time, opt_time):
 ## Print running time for cpu, naive and optimized algorithms
@@ -40,7 +40,7 @@ def CustomPrintHistogram(histogram):
 def CustomPrintSpeedUp(naive_kernel, opt_kernel):
 ## Print the speed up
 ## Arguments: The first argument is the naive kernel running time and the second is optimized version
-## Each argument is the length of 3.
+## Each argument is tthe length of 3.
  
     if len(opt_kernel) != len(naive_kernel) or len(opt_kernel) != 3:
         raise Exception('lenght of naive_kernel and opt_kernel must be 3, but get {}, {}'.format(len(naive_kernel), len(opt_kernel)))

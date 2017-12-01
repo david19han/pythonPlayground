@@ -10,6 +10,8 @@ import time
 from tabulate import tabulate
 import pandas as pd
 
+
+print("CUDA")
 def CustomPrintTime(py_time, naive_time, opt_time):
 ## Print running time for cpu, naive and optimized algorithms
 ## Arguments: Each argument is a list of length 3 that contains the running times for three cases
