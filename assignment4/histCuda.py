@@ -367,6 +367,35 @@ import matplotlib.patches as mpatches
 
 
 # red dashes, blue squares and green triangles
+
+#####################  
+plt.gcf() 
+plt.plot(arraysize_x, seqTimes, 'r')
+plt.xlabel('Array Size')
+plt.ylabel('SeqTime')
+plt.gca().set_ylim((min(seqTimes),max(seqTimes)))
+plt.legend(handles=[])
+plt.savefig('Seq.png')
+
+#####################  
+plt.gcf() 
+plt.plot(arraysize_x, naiveTimes, 'r')
+plt.xlabel('Array Size')
+plt.ylabel('NaiveTime')
+plt.legend(handles=[])
+plt.gca().set_ylim((min(naiveTimes),max(naiveTimes)))
+plt.savefig('Naive.png')
+
+##################### 
+plt.gcf()  
+plt.plot(arraysize_x, optiTimes, 'r')
+plt.xlabel('Array Size')
+plt.ylabel('OptimizedTime')
+plt.gca().set_ylim((min(optiTimes),max(optTimes)))
+plt.legend(handles=[])
+plt.savefig('Optimized.png')
+
+plt.gcf()  
 plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
 plt.xlabel('Array Size')
 plt.ylabel('Time')
@@ -381,7 +410,6 @@ handles.append(blue_patch)
 handles.append(green_patch)
 plt.legend(handles=handles)
 plt.savefig('CUDA.png')
-
 
 # plt.gcf()
 # plt.plot(arraysize_x,seqTimes)
