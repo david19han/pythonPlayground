@@ -188,7 +188,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 # naiveTimes = []
 
 # small_gpu = gpuarray.zeros(smallBins, np.int32)
-# input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
+input_gpu_small = gpuarray.to_gpu(data0.astype('int32')) 
 
 # print("GPU for Small Matrix:")
 # start = time.time()
@@ -205,7 +205,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 # print(np.array_equal(small_gpu.get(),hgram10.astype('int32')))
 # print "-" * 80
 # print("GPU for Medium Matrix:")
-# med_gpu = gpuarray.zeros(medBins,np.int32)
+med_gpu = gpuarray.zeros(medBins,np.int32)
 # input_gpu_med = gpuarray.to_gpu(data1.astype('int32'))
 # start = time.time()
 # naiveHisto(
@@ -223,7 +223,7 @@ __global__ void naiveHisto(int *data,int* histogram,int size)
 # print(np.array_equal(med_gpu.get(),hgram13.astype('int32')))
 # print "-" * 80
 # print("GPU for Large Matrix:")
-# large_gpu = gpuarray.zeros(largeBins,np.int32)
+large_gpu = gpuarray.zeros(largeBins,np.int32)
 # input_gpu_large = gpuarray.to_gpu(data2.astype('int32'))
 # start = time.time()
 # naiveHisto(
