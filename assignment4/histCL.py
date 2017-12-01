@@ -421,7 +421,7 @@ plt.gcf()
 plt.plot(arraysize_x, optiTimes, 'r')
 plt.xlabel('Array Size')
 plt.ylabel('OptimizedTime')
-plt.gca().set_ylim((min(optiTimes),max(optTimes)))
+plt.gca().set_ylim((min(optiTimes),max(optiTimes)))
 plt.legend(handles=[])
 plt.savefig('OptimizedCL.png')
 

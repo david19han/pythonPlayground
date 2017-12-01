@@ -375,7 +375,7 @@ plt.xlabel('Array Size')
 plt.ylabel('SeqTime')
 plt.gca().set_ylim((min(seqTimes),max(seqTimes)))
 plt.legend(handles=[])
-plt.savefig('Seq.png')
+plt.savefig('SeqCUDA.png')
 
 #####################  
 plt.gcf() 
@@ -384,16 +384,16 @@ plt.xlabel('Array Size')
 plt.ylabel('NaiveTime')
 plt.legend(handles=[])
 plt.gca().set_ylim((min(naiveTimes),max(naiveTimes)))
-plt.savefig('Naive.png')
+plt.savefig('NaiveCUDA.png')
 
 ##################### 
 plt.gcf()  
 plt.plot(arraysize_x, optiTimes, 'r')
 plt.xlabel('Array Size')
 plt.ylabel('OptimizedTime')
-plt.gca().set_ylim((min(optiTimes),max(optTimes)))
+plt.gca().set_ylim((min(optiTimes),max(optiTimes)))
 plt.legend(handles=[])
-plt.savefig('Optimized.png')
+plt.savefig('OptimizedCUDA.png')
 
 plt.gcf()  
 plt.plot(arraysize_x, seqTimes, 'r', arraysize_x, naiveTimes, 'b', arraysize_x, optiTimes, 'g')
