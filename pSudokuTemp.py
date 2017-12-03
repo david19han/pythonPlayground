@@ -336,7 +336,7 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
     while(flag[0]==0 && empty_spaces_count<empty_spaces_length)
     {    
         printf("1: %s %d\\n","empty_spaces_count is ", empty_spaces_count);
-        if
+        
         i = empty_spaces_i[empty_spaces_count];
         j = empty_spaces_j[empty_spaces_count];
         printf("%s\\n","1:EMPTY SPACES UPDATED");
@@ -369,7 +369,7 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
             path=findPossibleValues(idx,possibleValueList);
 
         }
-        
+
         if(empty_spaces_count < 0){
                 break;
         }    
