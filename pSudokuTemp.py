@@ -355,6 +355,7 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
         empty_spaces_count +=1;
     }
     flag[0]=1;
+    printf("KERNEL DONE\\n");
 }
 """
 ######################################## Sequential Code ###########################################
