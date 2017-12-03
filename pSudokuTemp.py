@@ -302,7 +302,6 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
     for(int i =0;i<totalSize;i++){
         grid[i] = more_grid[threadIdx.x*totalSize+i];
     }
-    printf("%s","david)
     for(int i = 0;i<totalSize;i++){
         printf("%d\n",grid[i]);
     }
