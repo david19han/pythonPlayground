@@ -482,6 +482,7 @@ print(len(d_moregrid.get()))
 # print(d_empty_spaces_i.get()[4:len(h_empty_spaces_i)])
 # for i in range(2):
 # boardcount=d_boardcount.get()[0]
+print("RUN SUDOKU TIME")
 runSudokuKernelFn(
     d_grid, 
     d_empty_spaces_i,
