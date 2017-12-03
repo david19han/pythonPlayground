@@ -369,8 +369,13 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
             }   
 
             printf("2: %s %d\\n","empty_spaces_count is ", empty_spaces_count);
-            i = empty_spaces_i[empty_spaces_count];
-            j = empty_spaces_j[empty_spaces_count];
+            if(empty_spaces_count >= 0){
+                i = empty_spaces_i[empty_spaces_count];
+                j = empty_spaces_j[empty_spaces_count];
+            }else{
+                break;
+            }
+            
             printf("%s\\n","2:EMPTY SPACES UPDATED");
             computePossibleValues(grid,possibleValueList,i,j);
 
