@@ -358,9 +358,8 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
 
             empty_spaces_count -=1;
 
-            if(empty_spaces_count < 0){
-                break;
-            }   
+            if(empty_spaces_count < 0) break;
+            
             if(empty_spaces_count < 0){
                 break;
                 printf("DAVID: %s %d\\n","empty_spaces_count is less than 0 ", empty_spaces_count);
