@@ -203,8 +203,8 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
     {
         for(b=0;b<sqrtSize;b++)
         {
-            if((a+startRow)*9+b+startCol-1 > 80){
-                printf("%s %d\\n","WRONG (a+startRow)*9+b+startCol-1 ",(a+startRow)*9+b+startCol-1 );
+            if((a+startRow)*9+b+startCol > 80){
+                printf("%s %d\\n","WRONG (a+startRow)*9+b+startCol ",(a+startRow)*9+b+startCol );
             }
             possibleValueList[grid[(a+startRow)*9+b+startCol]-1]=true;
         }
