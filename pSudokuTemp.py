@@ -187,11 +187,16 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
     }
     for(a=0;a<9;a++)
     {   
-        if(i*9+a < 81){
-            possibleValueList[grid[i*9+a]-1]=true;
+        if(i*9+a < 81 && i*9+a >= 0){
+            if(grid[i*9+a]-1 < 10 && grid[i*9+a]-1 >= 0){
+                possibleValueList[grid[i*9+a]-1]=true;
+            }
         }
-        if(a*9+j < 81){
-            possibleValueList[grid[a*9+j]-1]=true;
+        if(a*9+j < 81 && a*9+j >= 0){
+            if(grid[a*9+j]-1 < 10 && grid[a*9+j]-1>= 0){
+                possibleValueList[grid[a*9+j]-1]=true;
+            }
+            
         }
         
     }
@@ -201,11 +206,10 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
     {
         for(b=0;b<sqrtSize;b++)
         {
-            if((a+startRow)*9+b+startCol > 80){
-                printf("%s %d\\n","WRONG (a+startRow)*9+b+startCol ",(a+startRow)*9+b+startCol );
-            }
-            if(grid[(a+startRow)*9+b+startCol] > 0){
-                possibleValueList[grid[(a+startRow)*9+b+startCol]]=true;
+            if((a+startRow)*9+b+startCol < 81 && (a+startRow)*9+b+startCol >= 0){
+                if(grid[(a+startRow)*9+b+startCol] < 10 && grid[(a+startRow)*9+b+startCol] >= 0){
+                    possibleValueList[grid[(a+startRow)*9+b+startCol]]=true;
+                }
             }
             
         }
