@@ -173,7 +173,7 @@ kernel_code_template = """
 
 
 __device__ int mSize = 9;
-__device __ int maxNumBoards = 3000;
+__device__ int maxNumBoards = 3000;
 //Compute the Possible Values List
 //True-constraints exist
 //False-constraints do not exist, possible to be the value
