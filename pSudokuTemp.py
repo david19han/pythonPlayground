@@ -295,14 +295,6 @@ __global__ void generateBoard(int* grid,int* empty_spaces_i, int* empty_spaces_j
 
 __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_spaces_j,int empty_spaces_length,int* flag) {
 
-    // show memory usage of GPU
-
-        size_t free_byte ;
-
-        size_t total_byte ;
-
-        cuda_status = cudaMemGetInfo( &free_byte, &total_byte ) ;
-
     //keep private copy of specific board/grid
     const int totalSize = 9*9;
     int grid[totalSize];
