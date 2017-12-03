@@ -321,7 +321,7 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
     }
 
     printf("finished\\n");
-    unsigned int empty_spaces_count=0;
+    int empty_spaces_count=0;
     unsigned int idx;
     unsigned int i,j;
 
