@@ -470,6 +470,6 @@ runSudokuKernelFn(
     d_empty_spaces_j,
     np.int32(len(h_empty_spaces_i)),
     d_flag,
-    block = (1, 1,1), )
+    block = (2, 1,1), )
 cudanaivetime=time.time()-start
 # print("number of board:",d_boardcount.get())
