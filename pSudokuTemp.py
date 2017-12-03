@@ -186,13 +186,11 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
         possibleValueList[a]=false;
     }
     for(a=0;a<9;a++)
-    {
-        
-        
-        if(a*9+j > 80){
+    {   
+        if(i*9+a < 81){
             possibleValueList[grid[i*9+a]-1]=true;
         }
-        if(i*9+a > 80){
+        if(a*9+j < 81){
             possibleValueList[grid[a*9+j]-1]=true;
         }
         
