@@ -356,7 +356,7 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
             grid[i*9+j] = 0;  //reset grid
             printf("%s\\n","1:Grid UPDATED");
 
-            empty_spaces_count -=1;
+            empty_spaces_count--;
 
             if(empty_spaces_count < 0) break;
             
