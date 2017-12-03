@@ -189,6 +189,10 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
     {
         possibleValueList[grid[i*9+a]-1]=true;
         possibleValueList[grid[a*9+j]-1]=true;
+        if(a*9+j > 80 || i*9+a > 80){
+            printf("WRONG\\n");
+        }
+        
     }
     unsigned int startRow=(i/sqrtSize)*sqrtSize;
     unsigned int startCol=(j/sqrtSize)*sqrtSize;
@@ -196,6 +200,9 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
     {
         for(b=0;b<sqrtSize;b++)
         {
+            if((a+startRow)*9+b+startCol]-1 > 80){
+                printf("WRONG\\n");
+            }
             possibleValueList[grid[(a+startRow)*9+b+startCol]-1]=true;
         }
     }
