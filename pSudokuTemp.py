@@ -172,8 +172,6 @@ kernel_code_template = """
 #include<stdio.h> 
 
 
-__device__ int mSize = 9;
-__device__ int maxNumBoards = 3000;
 //Compute the Possible Values List
 //True-constraints exist
 //False-constraints do not exist, possible to be the value
@@ -181,16 +179,16 @@ __device__ int maxNumBoards = 3000;
 __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigned int i,unsigned int j)
 {
     unsigned int a,b;
-    unsigned int sqrtSize=(unsigned int)sqrt((float)mSize);
+    unsigned int sqrtSize=(unsigned int)sqrt((float)9);
 
-    for(a=0;a<mSize;a++)
+    for(a=0;a<9;a++)
     {
         possibleValueList[a]=false;
     }
-    for(a=0;a<mSize;a++)
+    for(a=0;a<9;a++)
     {
-        possibleValueList[grid[i*mSize+a]-1]=true;
-        possibleValueList[grid[a*mSize+j]-1]=true;
+        possibleValueList[grid[i*9+a]-1]=true;
+        possibleValueList[grid[a*9+j]-1]=true;
     }
     unsigned int startRow=(i/sqrtSize)*sqrtSize;
     unsigned int startCol=(j/sqrtSize)*sqrtSize;
@@ -198,7 +196,7 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
     {
         for(b=0;b<sqrtSize;b++)
         {
-            possibleValueList[grid[(a+startRow)*mSize+b+startCol]-1]=true;
+            possibleValueList[grid[(a+startRow)*9+b+startCol]-1]=true;
         }
     }
 }
@@ -208,7 +206,7 @@ __device__ void computePossibleValues(int* grid, bool* possibleValueList,unsigne
 __device__ bool findPossibleValues(unsigned int &idx, bool* possibleValueList)
 {
     bool path=false;
-    for(;idx<mSize;idx++)
+    for(;idx<9;idx++)
     {
         if(possibleValueList[idx]==false)
         {
@@ -231,18 +229,18 @@ __global__ void generateBoard(int* grid,int* empty_spaces_i, int* empty_spaces_j
     unsigned int idx;
     unsigned int i,j;
 
-    bool possibleValueList[mSize];
+    bool possibleValueList[9];
 
     unsigned int emptyspaces_fillcount=0;
 
-    unsigned int possibleValuesIdx[mSize*mSize];
+    unsigned int possibleValuesIdx[9*9];
 
     //initialise possibleValueIdx array to 0
-    for(unsigned int a=0;a<mSize*mSize;a++)
+    for(unsigned int a=0;a<9*9;a++)
     {
         possibleValuesIdx[a]=0;
     }
-    while((threadCount[0]<maxNumBoards)&&(emptyspaces_fillcount<empty_spaces_length))
+    while((threadCount[0]<3000)&&(emptyspaces_fillcount<empty_spaces_length))
     {
         //fill in emptyspaces and call more
         i = empty_spaces_i[empty_spaces_count];
@@ -251,7 +249,7 @@ __global__ void generateBoard(int* grid,int* empty_spaces_i, int* empty_spaces_j
         computePossibleValues(grid,possibleValueList,i,j);
 
         //start from possibleValuesIdx to prevent doing the same node again for backtracking
-        idx=possibleValuesIdx[i*mSize+j];
+        idx=possibleValuesIdx[i*9+j];
         path=findPossibleValues(idx,possibleValueList);
 
         if(empty_spaces_count==4) //store results and start backtrack
@@ -259,11 +257,11 @@ __global__ void generateBoard(int* grid,int* empty_spaces_i, int* empty_spaces_j
             path=false;
 
             //output grid for every new board
-            for (x=0;x<mSize;x++)
+            for (x=0;x<9;x++)
             {
-                for(y=0;y<mSize;y++)
+                for(y=0;y<9;y++)
                 {
-                    out[threadCount[0]*mSize*mSize+y*mSize+x]=grid[y*mSize+x];
+                    out[threadCount[0]*9*9+y*9+x]=grid[y*9+x];
                 }
             }
             threadCount[0]+=1;
@@ -271,8 +269,8 @@ __global__ void generateBoard(int* grid,int* empty_spaces_i, int* empty_spaces_j
         while(path==false)
         {
             //backtrack
-            possibleValuesIdx[i*mSize+j]=0; //reset start index
-            grid[i*mSize+j] = 0;  //reset grid
+            possibleValuesIdx[i*9+j]=0; //reset start index
+            grid[i*9+j] = 0;  //reset grid
             empty_spaces_count -=1;
 
             if(empty_spaces_count==-1)
@@ -283,13 +281,13 @@ __global__ void generateBoard(int* grid,int* empty_spaces_i, int* empty_spaces_j
 
             computePossibleValues(grid,possibleValueList,i,j);
 
-            idx=possibleValuesIdx[i*mSize+j];
+            idx=possibleValuesIdx[i*9+j];
             path=findPossibleValues(idx,possibleValueList);
         }    
         if(empty_spaces_count==-1)
             break;
-        grid[i*mSize+j] = idx+1; //set value
-        possibleValuesIdx[i*mSize+j]=idx+1; //next time check for possible values, start from next value
+        grid[i*9+j] = idx+1; //set value
+        possibleValuesIdx[i*9+j]=idx+1; //next time check for possible values, start from next value
         empty_spaces_count +=1;
     }
     grid[0]=3;
@@ -297,7 +295,7 @@ __global__ void generateBoard(int* grid,int* empty_spaces_i, int* empty_spaces_j
 
 __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_spaces_j,int empty_spaces_length,int* flag) {
     //keep private copy of specific board/grid
-    const int totalSize = mSize*mSize;
+    const int totalSize = 9*9;
     int grid[totalSize];
     for(int i =0;i<totalSize;i++){
         grid[i] = more_grid[threadIdx.x*totalSize+i];
@@ -309,15 +307,15 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
     unsigned int idx;
     unsigned int i,j;
 
-    unsigned int possibleValuesIdx[mSize*mSize];
+    unsigned int possibleValuesIdx[9*9];
 
     //initialise possibleValueIdx array to 0
-    for(unsigned int a=0;a<mSize*mSize;a++)
+    for(unsigned int a=0;a<9*9;a++)
     {
         possibleValuesIdx[a]=0;
     }
 
-    bool possibleValueList[mSize];
+    bool possibleValueList[9];
     bool path;
     while(flag[0]==0 && empty_spaces_count<empty_spaces_length)
     {    
@@ -327,14 +325,14 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
         computePossibleValues(grid,possibleValueList,i,j);
 
         //start from possibleValuesIdx to prevent doing the same node again for backtracking
-        idx=possibleValuesIdx[i*mSize+j];
+        idx=possibleValuesIdx[i*9+j];
         path=findPossibleValues(idx,possibleValueList);
 
         while(path==false)
         {
             //backtrack
-            possibleValuesIdx[i*mSize+j]=0; //reset start index
-            grid[i*mSize+j] = 0;  //reset grid
+            possibleValuesIdx[i*9+j]=0; //reset start index
+            grid[i*9+j] = 0;  //reset grid
             empty_spaces_count -=1;
 
             i = empty_spaces_i[empty_spaces_count];
@@ -342,12 +340,12 @@ __global__ void runSudokuKernel(int* more_grid,int* empty_spaces_i,int* empty_sp
 
             computePossibleValues(grid,possibleValueList,i,j);
 
-            idx=possibleValuesIdx[i*mSize+j];
+            idx=possibleValuesIdx[i*9+j];
             path=findPossibleValues(idx,possibleValueList);
 
         }    
-        grid[i*mSize+j] = idx+1; //set value
-        possibleValuesIdx[i*mSize+j]=idx+1; //next time check for possible values, start from next value
+        grid[i*9+j] = idx+1; //set value
+        possibleValuesIdx[i*9+j]=idx+1; //next time check for possible values, start from next value
         empty_spaces_count +=1;
     }
     flag[0]=1;
